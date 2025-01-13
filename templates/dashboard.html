@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Your Dashboard</h1>
+    {% if submissions %}
+        <ul>
+            {% for submission in submissions %}
+                <li>
+                    <strong>{{ submission.algorithm }}</strong> submitted on {{ submission.submitted_at }}:
+                    <p><strong>Feedback:</strong> {{ submission.evaluation.feedback }}</p>
+                    <p><strong>Correct:</strong> {{ submission.evaluation.correctness }}</p>
+                    <p><strong>Time Complexity:</strong> {{ submission.evaluation.time_complexity }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No submissions yet. Submit your first code <a href="{% url 'submit_code' %}">here</a>.</p>
+    {% endif %}
+</body>
+</html>

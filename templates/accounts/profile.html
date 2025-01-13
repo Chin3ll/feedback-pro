@@ -1,0 +1,378 @@
+
+{% load static %}
+
+
+
+<!DOCTYPE html>
+<html lang="en" dir="">
+<head>
+  <!-- Required Meta Tags Always Come First -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Title -->
+  <title>Course: Author Profile | Front - Multipurpose Responsive Template</title>
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="../favicon.ico">
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- CSS Implementing Plugins -->
+  <link rel="stylesheet" href="{% static 'css/vendor.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}">
+
+  <!-- CSS Front Template -->
+  <link rel="stylesheet" href="{% static 'css/theme.min.css' %}">
+</head>
+
+<body>
+  <!-- ========== HEADER ========== -->
+  <header id="header" class="navbar navbar-expand-lg navbar-end navbar-light">
+    <!-- Topbar -->
+    <div class="container navbar-topbar">
+      <nav class="js-mega-menu navbar-nav-wrap">
+        <!-- Toggler -->
+        <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#topbarNavDropdown" aria-controls="topbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="d-flex justify-content-between align-items-center">
+            <span class="navbar-toggler-text">Topbar</span>
+
+            <span class="navbar-toggler-default">
+              <i class="bi-chevron-down ms-2"></i>
+            </span>
+            <span class="navbar-toggler-toggled">
+              <i class="bi-chevron-up ms-2"></i>
+            </span>
+          </span>
+        </button>
+        <!-- End Toggler -->
+
+        <div id="topbarNavDropdown" class="navbar-nav-wrap-collapse collapse navbar-collapse navbar-topbar-collapse">
+          <div class="navbar-toggler-wrapper">
+            <div class="navbar-topbar-toggler d-flex justify-content-between align-items-center">
+              <span class="navbar-toggler-text small">Topbar</span>
+
+              <!-- Toggler -->
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topbarNavDropdown" aria-controls="topbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="bi-x"></i>
+              </button>
+              <!-- End Toggler -->
+            </div>
+          </div>
+
+       
+        </div>
+      </nav>
+    </div>
+    <!-- End Topbar -->
+
+    <div class="container">
+      <nav class="js-mega-menu navbar-nav-wrap">
+        <!-- Default Logo -->
+        <a class="navbar-brand" href="../demo-jobs/index.html" aria-label="Front">
+          <img class="navbar-brand-logo" src="{% static 'images/logo.png' %}" alt="Logo">
+        </a>
+        <!-- End Default Logo -->
+
+        <!-- Toggler -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-default">
+            <i class="bi-list"></i>
+          </span>
+          <span class="navbar-toggler-toggled">
+            <i class="bi-x"></i>
+          </span>
+        </button>
+        <!-- End Toggler -->
+
+        <!-- Collapse -->
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active" href="/">Home</a>
+            </li>
+
+            <!-- Dropdown -->
+            {% if is_logged_in %}
+            <li class="hs-has-sub-menu nav-item">
+              <a id="listingsDropdown" class="hs-mega-menu-invoker nav-link dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Welcome, {{ user.username }}</a>
+              <div class="hs-sub-menu dropdown-menu" aria-labelledby="listingsDropdown" style="min-width: 14rem;">
+                
+                <a class="dropdown-item " href="{% url 'profile' %}">Profile</a>
+                <a class="dropdown-item " href="{% url 'logout' %}">Logout</a>
+              </div>
+            </li>
+            {% else %}
+
+            <li class="hs-has-sub-menu nav-item">
+              <a id="listingsDropdown" class="hs-mega-menu-invoker nav-link dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Account</a>
+              <div class="hs-sub-menu dropdown-menu" aria-labelledby="listingsDropdown" style="min-width: 14rem;">
+                
+                <a class="dropdown-item " href="{% url 'login' %}">Login</a>
+                <a class="dropdown-item " href="{% url 'register' %}">Register</a>
+              </div>
+            </li>
+
+            {% endif %}
+            <!-- End Dropdown -->
+
+           
+
+            
+            
+          </ul>
+        </div>
+        <!-- End Collapse -->
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========== END HEADER ========== -->
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main id="content" role="main">
+    <!-- Content -->
+    <div class="container content-space-t-1 content-space-t-sm-2 content-space-b-2">
+      <div class="row">
+        <div class="col-md-5 col-lg-4 mb-7 mb-md-0">
+          <!-- Sticky Block -->
+          <div id="stickyBlockStartPoint">
+            <div class="js-sticky-block" data-hs-sticky-block-options='{
+                   "parentSelector": "#stickyBlockStartPoint",
+                   "breakpoint": "md",
+                   "startPoint": "#stickyBlockStartPoint",
+                   "endPoint": "#stickyBlockEndPoint",
+                   "stickyOffsetTop": 12,
+                   "stickyOffsetBottom": 12
+                 }'>
+              <!-- Card -->
+              <div class="card">
+                <!-- Card Header -->
+                <div class="card-header text-center">
+                  <div class="mb-3">
+                    <img class="avatar avatar-xxl avatar-circle avatar-centered" src="{% static 'images/user.jpg' %}" alt="Image Description">
+                  </div>
+
+                  <span class="d-block text-body small mb-3">Joined in {{ user.date_joined }}</span>
+              
+
+              {% if user.profile.role == "student" %}
+                  <a class="btn btn-outline-primary btn-transition" href="{% url 'dashboard_s' %}">
+                    <i class="bi-envelope me-2"></i> Proceed
+                  </a>
+              {% elif user.profile.role == "lecturer" %}
+
+            
+                  <a class="btn btn-outline-primary btn-transition" href="{% url 'dashboard_t' %}">
+                    <i class="bi-envelope me-2"></i> Proceed
+                  </a>
+              {% elif user.profile.role == "admin" %}
+              <a class="btn btn-outline-primary btn-transition" href="{% url 'dashboard_a' %}">
+                <i class="bi-envelope me-2"></i> Proceed
+              </a>
+              {% else %}
+                  <p>No specific actions available for your role.</p>
+              {% endif %}
+                </div>
+                <!-- End Card Header -->
+
+                <!-- Card Body -->
+                <div class="card-body">
+                  <div class="row mb-7">
+                    <div class="col-6 col-md-12 col-lg-6 mb-4">
+                      <!-- Icon Block -->
+                      <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                          <span class="avatar avatar-xs">
+                            <img class="avatar-img" src="{% static 'images/review-rating-shield.svg' %}" alt="Image Description">
+                          </span>
+                        </div>
+
+                        <div class="flex-grow-1 ms-3">
+                          <span class="text-body small">533 Reviews</span>
+                        </div>
+                      </div>
+                      <!-- End Icon Block -->
+                    </div>
+                    <!-- End Col -->
+
+                    <div class="col-6 col-md-12 col-lg-6 mb-4">
+                      <!-- Icon Block -->
+                      <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                          <span class="avatar avatar-xs">
+                            <img class="avatar-img" src="{% static 'images/star.svg' %}" alt="Image Description">
+                          </span>
+                        </div>
+
+                        <div class="flex-grow-1 ms-3">
+                          <span class="text-body small">4.87 rating</span>
+                        </div>
+                      </div>
+                      <!-- End Icon Block -->
+                    </div>
+                    <!-- End Col -->
+
+                   
+
+                   
+                    <!-- End Col -->
+                  </div>
+                  <!-- End Row -->
+
+                  
+
+              
+                </div>
+                <!-- End Card Body -->
+
+           
+              </div>
+              <!-- End Card -->
+            </div>
+          </div>
+          <!-- End Sticky Block -->
+        </div>
+        <!-- End Col -->
+
+        <div class="col-md-7 col-lg-8">
+          <div class="ps-lg-6">
+            <div class="mb-3 mb-sm-0 me-2">
+              <h2>Welcome, {{ user.username }}</h2>
+            </div>
+
+            <div class="d-flex small mb-3">
+              <div class="flex-shrink-0">
+                <i class="bi-briefcase-fill"></i>
+              </div>
+              <div class="flex-grow-1 ms-2">
+               Role: {{ user.profile.role }}
+              </div>
+            </div>
+
+            <p>"Welcome to your profile! Here, you can easily manage your information, update details, and access personalized 
+              features tailored to your role. Keep your profile up-to-date and unlock a seamless experience
+               designed just for you."</p>
+
+            <!-- Read More - Collapse -->
+            <div class="collapse" id="collapseDescriptionSection">
+              <p>Over the course of her career she has developed a skill set in analyzing data 
+                and she hopes to use her experience in teaching and data science to help other people learn the 
+                power of programming the ability to analyze data, as well as present the data in clear and beautiful
+                 visualizations.</p>
+            </div>
+            <!-- End Read More - Collapse -->
+
+            <!-- Link -->
+            <a class="link link-collapse" data-bs-toggle="collapse" href="#collapseDescriptionSection" role="button" aria-expanded="false" aria-controls="collapseDescriptionSection">
+              {% if user.profile.role == "student" %}
+              <a href="{% url 'dashboard_s' %}" class="btn btn-primary">Submit Assignment</a>
+          {% elif user.profile.role == "lecturer" %}
+              <a href="{% url 'dashboard_t' %}" class="btn btn-info">View Student Assignments</a>
+          {% elif user.profile.role == "admin" %}
+              <a href="{% url 'dashboard_a' %}" class="btn btn-warning">Manage All Users</a>
+          {% else %}
+              <p>No specific actions available for your role.</p>
+          {% endif %}
+            </a>
+            <!-- End Link -->
+
+        
+
+
+            <!-- Sticky Block End Point -->
+            <div id="stickyBlockEndPoint"></div>
+          </div>
+        </div>
+        <!-- End Col -->
+      </div>
+      <!-- End Row -->
+    </div>
+    <!-- End Content -->
+  </main>
+  <!-- ========== END MAIN CONTENT ========== -->
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="bg-dark">
+    <div class="container pb-1 pb-lg-5">
+      <div class="row content-space-t-2">
+       
+
+        
+
+
+
+      <!-- Copyright -->
+      <div class="w-md-85 text-lg-center mx-lg-auto">
+        <p class="text-white-50 small">&copy; Front. 2021 Htmlstream. All rights reserved.</p>
+        <p class="text-white-50 small">When you visit or interact with our sites, services or tools, we or our authorised service providers may use cookies for storing information to help provide you with a better, faster and safer experience and for marketing purposes.</p>
+      </div>
+      <!-- End Copyright -->
+    </div>
+  </footer>
+
+  <!-- ========== END FOOTER ========== -->
+
+  <!-- ========== SECONDARY CONTENTS ========== -->
+  <!-- Go To -->
+  <a class="js-go-to go-to position-fixed" href="javascript:;" style="visibility: hidden;" data-hs-go-to-options='{
+       "offsetTop": 700,
+       "position": {
+         "init": {
+           "right": "2rem"
+         },
+         "show": {
+           "bottom": "2rem"
+         },
+         "hide": {
+           "bottom": "-2rem"
+         }
+       }
+     }'>
+    <i class="bi-chevron-up"></i>
+  </a>
+  <!-- ========== END SECONDARY CONTENTS ========== -->
+
+  <!-- JS Implementing Plugins -->
+  <script src="{% static 'js/vendor.min.js' %}"></script>
+
+  <!-- JS Front -->
+  <script src="{% static 'js/theme.min.js' %}"></script>
+
+  <!-- JS Plugins Init. -->
+  <script>
+    (function() {
+      // INITIALIZATION OF HEADER
+      // =======================================================
+      new HSHeader('#header').init()
+
+
+      // INITIALIZATION OF MEGA MENU
+      // =======================================================
+      new HSMegaMenu('.js-mega-menu', {
+          desktop: {
+            position: 'left'
+          }
+        })
+
+
+      // INITIALIZATION OF BOOTSTRAP DROPDOWN
+      // =======================================================
+      HSBsDropdown.init()
+
+
+      // INITIALIZATION OF GO TO
+      // =======================================================
+      new HSGoTo('.js-go-to')
+
+
+      // INITIALIZATION OF STICKY BLOCKS
+      // =======================================================
+      new HSStickyBlock('.js-sticky-block', {
+        targetSelector: document.getElementById('header').classList.contains('navbar-fixed') ? '#header' : null
+      })
+    })()
+  </script>
+</body>
+</html>

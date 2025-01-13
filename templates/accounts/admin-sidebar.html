@@ -1,0 +1,14 @@
+{% block sidebar %}
+
+<div class="sidebar">
+    <h4 class="text-center py-3"> <a href="{% url 'dashboard_a' %}"> Dashboard </a> </h4>
+    <a href="{% url 'users_list' %}">Manage All users</a> 
+    <a href="{% url 'students_list' %}">Manage Student</a>
+    <a href="{% url 'check_student_assignments' %}">Manage Submitted Assignment</a>
+    <a href="#">Generate Feedback</a>
+    <a href="#">Generate Grade using System Configuration</a>
+    <a href="#">Return Grade</a>
+    <a href="#">Verify Grade</a>
+</div>
+
+{% endblock sidebar %}
