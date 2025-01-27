@@ -100,6 +100,11 @@ def dashboard_s(request):
     ]
     
     total_students = User.objects.filter(profile__role='student').count()
+    
+    current_user = request.user
+
+    # Fetch evaluations submitted by the current user
+    evaluations = Evaluation.objects.filter(student=current_user)
 
     context = {
         "total_students": total_students,
@@ -107,7 +112,7 @@ def dashboard_s(request):
         "recent_submissions": recent_submissions,
     }
     
-    return render(request, "accounts/dashboard-s.html", context)    
+    return render(request, 'accounts/student_submitted_assignment.html', {'evaluations': evaluations})   
 
 def login_view(request):
     if request.method == 'POST':

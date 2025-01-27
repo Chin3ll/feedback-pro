@@ -8,10 +8,11 @@ from django.shortcuts import render
 import logging
 from django.http import JsonResponse
 from .utils import generate_feedback
-from .models import Evaluation
+from django.shortcuts import get_object_or_404
+from .models import EvaluationCriteria, Evaluation
 import ast
 import subprocess
-
+from django.contrib.auth.models import User  # Ensure the User model is imported
 
 # Initialize Cohere client
 co = cohere.Client('ZIFDjiIznKChVeU5Q1v2z25sKYTI8nQFTV5Q4MYL')  # Replace with your API key
@@ -59,83 +60,141 @@ def evaluate_code(submission_code):
         "correctness": True
     }
 
+    # Fetch active criteria
+    active_criteria = EvaluationCriteria.objects.filter(is_active=True).values_list('name', flat=True)
+
     # Syntax Check
-    try:
-        ast.parse(submission_code)  # Parse the code to check syntax
-        feedback["feedback"].append("Code has valid syntax.")
-    except SyntaxError as e:
-        feedback["feedback"].append(f"Syntax error: {e.msg} at line {e.lineno}.")
-        feedback["correctness"] = False
+    if "Syntax Check" in active_criteria:
+        try:
+            ast.parse(submission_code)  # Parse the code to check syntax
+            feedback["feedback"].append("Code has valid syntax.")
+        except SyntaxError as e:
+            feedback["feedback"].append(f"Syntax error: {e.msg} at line {e.lineno}.")
+            feedback["correctness"] = False
 
     # Indentation Check
-    lines = submission_code.split("\n")
-    for i, line in enumerate(lines):
-        if line and not line.startswith(" ") and line != line.lstrip():
-            feedback["feedback"].append(f"Improper indentation at line {i + 1}: Use multiples of 4 spaces.")
-            feedback["correctness"] = False
-            break
+    if "Indentation Check" in active_criteria:
+        lines = submission_code.split("\n")
+        for i, line in enumerate(lines):
+            if line and not line.startswith(" ") and line != line.lstrip():
+                feedback["feedback"].append(f"Improper indentation at line {i + 1}: Use multiples of 4 spaces.")
+                feedback["correctness"] = False
+                break
 
     # Comment Check
-    if "#" not in submission_code:
-        feedback["feedback"].append("Code lacks comments. Consider adding comments for clarity.")
-
-    # Execution Check (Optional)
-    try:
-        result = subprocess.run(
-            ["python3", "-c", submission_code],
-            capture_output=True,
-            text=True,
-            timeout=5
-        )
-        if result.stderr:
-            feedback["feedback"].append(f"Runtime error: {result.stderr.strip()}")
-            feedback["correctness"] = False
-        else:
-            feedback["feedback"].append("Code executed successfully.")
-    except subprocess.TimeoutExpired:
-        feedback["feedback"].append("Code execution timed out.")
-        feedback["correctness"] = False
+    if "Comment Check" in active_criteria:
+        if "#" not in submission_code:
+            feedback["feedback"].append("Code lacks comments. Consider adding comments for clarity.")
 
     return feedback
 
+def evaluate_code_with_criteria(code, criteria):
+    import ast
+    feedback = []
+    correctness = True
 
+    # Check Syntax
+    if criteria.check_syntax:
+        try:
+            ast.parse(code)  # Parse the code for syntax errors
+            feedback.append("Syntax is correct.")
+            
+            # Additional Compilation Check
+            try:
+                compile(code, "<string>", "exec")
+            except Exception as exec_error:
+                feedback.append(f"Code compilation error: {exec_error}")
+                correctness = False
+        except SyntaxError as syntax_error:
+            feedback.append(f"Syntax error: {syntax_error}")
+            correctness = False
+
+    # Check Indentation
+    if criteria.check_indentation:
+        lines = code.split("\n")
+        indentation_stack = [0]
+        for line_no, line in enumerate(lines, start=1):
+            stripped = line.lstrip()
+            if not stripped or stripped.startswith("#"):
+                continue  # Skip blank lines and comments
+            
+            leading_spaces = len(line) - len(stripped)
+
+            if leading_spaces % 4 != 0:
+                feedback.append(f"Line {line_no}: Indentation should be a multiple of 4 spaces.")
+                correctness = False
+
+            if stripped.endswith(":"):
+                if leading_spaces > indentation_stack[-1]:
+                    indentation_stack.append(leading_spaces)
+                else:
+                    feedback.append(f"Line {line_no}: Expected increased indentation for a block after ':'.")
+                    correctness = False
+            else:
+                while indentation_stack and leading_spaces < indentation_stack[-1]:
+                    indentation_stack.pop()
+
+                if leading_spaces != indentation_stack[-1] and len(indentation_stack) > 1:
+                    feedback.append(f"Line {line_no}: Misaligned indentation.")
+                    correctness = False
+
+    # Check Comments
+    if criteria.check_comments:
+        comment_count = sum(1 for line in code.split("\n") if line.strip().startswith("#"))
+        if comment_count < criteria.min_comments:
+            feedback.append(f"Insufficient comments. Found {comment_count}, but at least {criteria.min_comments} required.")
+            correctness = False
+        else:
+            feedback.append(f"Comments are sufficient: {comment_count} comment(s).")
+
+    return {
+        "feedback": "\n".join(feedback),
+        "correctness": correctness,
+        "time_complexity": "Not Applicable"
+    }
+
+
+@login_required
 def submit_code(request):
     if request.method == "POST":
         try:
-            # Retrieve submitted code
-            submission_code = request.POST.get("submission_code", "").strip()
+            title = request.POST.get('title', '').strip()
+            submission_code = request.POST.get('submission_code', '').strip()
+            student = request.user
+
+            if not title:
+                return JsonResponse({"success": False, "error": "Title is required."})
             if not submission_code:
                 return JsonResponse({"success": False, "error": "Submission code is required."})
 
-            # Evaluate the code
-            feedback = evaluate_code(submission_code)
-            feedback_message = " ".join(feedback["feedback"])
+            # Get evaluation criteria
+            criteria = get_object_or_404(EvaluationCriteria, pk=1)  # Assuming a single criteria instance
 
-            # Save evaluation (if using a model)
+            # Evaluate the code
+            feedback = evaluate_code_with_criteria(submission_code, criteria)
+
+            # Save evaluation to the database
             evaluation = Evaluation.objects.create(
-                title="General Python Code",
-                student=request.user,
+                title=title,
+                student=student,
                 student_code=submission_code,
-                feedback=feedback_message,
+                feedback=feedback["feedback"],
                 correctness=feedback["correctness"],
-                status="submitted"
+                time_complexity=feedback["time_complexity"],
+                status='submitted'
             )
 
-            # Render feedback result
             return render(request, "feedback_result.html", {
                 "success": True,
-                "feedback": feedback_message,
+                "feedback": feedback["feedback"],
                 "evaluation": evaluation
             })
 
         except Exception as e:
-            return render(request, "feedback_result.html", {
-                "success": False,
-                "error": str(e)
-            })
-    else:
-        # Render the submission form
-        return render(request, "submit_code_form.html")
+            logger.error(f"Error during code submission: {e}")
+            return render(request, "feedback_result.html", {"success": False, "error": str(e)})
+
+    return render(request, "submit_code_form.html")
 
 # @login_required
 # def submit_code(request):

@@ -51,3 +51,16 @@ class Evaluation(models.Model):
 
     def __str__(self):
         return f"{self.title} - {self.student.username} - {self.created_at}"
+
+
+
+
+class EvaluationCriteria(models.Model):
+    check_syntax = models.BooleanField(default=True, help_text="Check for syntactic accuracy.")
+    check_indentation = models.BooleanField(default=True, help_text="Check for correct indentation.")
+    check_comments = models.BooleanField(default=True, help_text="Check for good comments.")
+    min_comments = models.PositiveIntegerField(default=1, help_text="Minimum required comments in the code.")
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "Evaluation Criteria"
