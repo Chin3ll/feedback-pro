@@ -1,13 +1,13 @@
-import cohere
+# import cohere
 from .evaluation import evaluate_code
-from .gpt_feedback import generate_feedback
+# from .gpt_feedback import generate_feedback
 
 from django.contrib.auth.decorators import login_required
 from .models import Submission, Evaluation
 from django.shortcuts import render
 import logging
 from django.http import JsonResponse
-from .utils import generate_feedback
+# from .utils import generate_feedback
 from django.shortcuts import get_object_or_404
 from .models import EvaluationCriteria, Evaluation
 import ast
@@ -15,7 +15,7 @@ import subprocess
 from django.contrib.auth.models import User  # Ensure the User model is imported
 
 # Initialize Cohere client
-co = cohere.Client('ZIFDjiIznKChVeU5Q1v2z25sKYTI8nQFTV5Q4MYL')  # Replace with your API key
+# co = cohere.Client('ZIFDjiIznKChVeU5Q1v2z25sKYTI8nQFTV5Q4MYL')  # Replace with your API key
 
 
 def home(request):

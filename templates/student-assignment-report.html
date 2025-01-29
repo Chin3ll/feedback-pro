@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            color: #fff;
+            height: 100vh;
+            position: fixed;
+        }
+        .sidebar a {
+            color: #adb5bd;
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+        }
+        .sidebar a:hover {
+            background-color: #495057;
+            color: #fff;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            width: 100%;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h4 class="text-center py-3">Dashboard</h4>
+    <a href="{% url 'submit_assignment' %}">Submit Assignment</a>
+    <a href="{% url 'student_submitted_assignment' %}">Check Grade and Feedback</a> 
+</div>
+
+<div class="main-content">
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Evaluation Report</a>
+            </div>
+        </nav>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Evaluation Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6><strong>Title:</strong> {{ evaluation.title }}</h6>
+                        <p><strong>Date Submitted:</strong> {{ evaluation.created_at|date:"F j, Y, g:i a" }}</p>
+                        <p><strong>Status:</strong>
+                            <span 
+                                class="badge 
+                                {% if evaluation.status == 'submitted' %} bg-success 
+                                {% elif evaluation.status == 'reviewed' %} bg-warning text-dark 
+                                {% elif evaluation.status == 'pending' %} bg-danger 
+                                {% endif %}">
+                                {{ evaluation.status|capfirst }}
+                            </span>
+                        </p>
+                        <hr>
+                        <h6><strong>Submitted Code:</strong></h6>
+                        <pre>{{ evaluation.student_code }}</pre>
+                        <hr>
+                        <h6><strong>Feedback:</strong></h6>
+                        <p>{{ evaluation.feedback }}</p>
+                        <hr>
+                        <h6><strong>Grade:</strong></h6>
+                        <p> {% if evaluation.grade %}
+                              {{ evaluation.grade }}%
+                            {% else %}
+                                None
+                            {% endif %}
+                        </p>
+                        <hr>
+                        <h6><strong>GPT Feedback:</strong></h6>
+                        <p>{{ evaluation.gpt_feedback }}</p>
+                        <hr>
+                        <h6><strong>Correctness:</strong> {{ evaluation.correctness|yesno:"Correct,Incorrect" }}</h6>
+                        <h6><strong>Time Complexity:</strong> {{ evaluation.time_complexity }}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

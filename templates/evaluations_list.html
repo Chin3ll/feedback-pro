@@ -61,9 +61,11 @@
                 {% if user.profile.role == "admin" %}
 
                 <a class="navbar-brand" href="{% url 'dashboard_a' %}">Admin Dashboard</a>
+                <div class="card-header">Feedback GS System <a href="/">Home</a> </div>
 
                 {% elif user.profile.role == "student" %}
                 <a class="navbar-brand" href="{% url 'dashboard_t' %}">Tutor Dashboard</a>
+                <div class="card-header">Feedback GS System <a href="/">Home</a> </div>
                 {% endif %}
 
             </div>
@@ -90,6 +92,7 @@
                             <th>Grade</th>
                             <th>Correctness</th>
                             <th>Time Submitted</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -102,6 +105,7 @@
                             <td>{{ evaluation.grade|default:"N/A" }}</td>
                             <td>{{ evaluation.correctness|yesno:"Correct,Incorrect" }}</td>
                             <td>{{ evaluation.created_at|date:"Y-m-d H:i:s" }}</td>
+                             <td><a href="{% url 'admin:sorting_feedback_evaluation_change' evaluation.id %}" class="btn btn-primary btn-sm">View</a></td>
                         </tr>
                         {% empty %}
                         <tr>

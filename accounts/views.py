@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -6,7 +6,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 User = get_user_model()
+
 from sorting_feedback.models import Evaluation
+from django.contrib.auth.decorators import login_required
 
 
 def submit_assignment(request):
@@ -23,7 +25,7 @@ def check_student_assignments(request):
     return render(request, 'evaluations_list.html', {'evaluations': evaluations})
 
 
-from django.contrib.auth.decorators import login_required
+
 
 @login_required
 def dashboard_a(request):
@@ -180,3 +182,21 @@ def users_list(request):
     # Get all users
     users = User.objects.all()
     return render(request, 'accounts/users_list.html', {'users': users})
+
+
+def evaluation_report(request, evaluation_id):
+    # Fetch evaluation object by ID for the logged-in student
+    evaluation = get_object_or_404(Evaluation, id=evaluation_id, student=request.user)
+
+    return render(request, 'student-assignment-report.html', {
+        'evaluation': evaluation
+    })
+
+
+@login_required
+def pending_evaluations_list(request):
+    # Fetch all pending evaluations
+    evaluations = Evaluation.objects.filter(status='pending')
+
+    return render(request, 'pending_evaluations_list.html', {'evaluations': evaluations})
+

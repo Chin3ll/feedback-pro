@@ -15,4 +15,6 @@ urlpatterns = [
     path('dashboard-s/', views.dashboard_s, name='dashboard_s'),
     path('dashboard-student-assignment-submission/', views.dashboard_student_assignment_submission, name='dashboard_student_assignment_submission'),
     path('students-list/', views.students_list, name='students_list'),
+    path('evaluation/<int:evaluation_id>/', views.evaluation_report, name='evaluation_report'),
+    path('pending-evaluation-list/', views.pending_evaluations_list, name='pending_evaluations_list'),
 ]

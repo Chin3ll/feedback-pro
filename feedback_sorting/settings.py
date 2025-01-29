@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 
 from decouple import config
 
-COHERE_API_KEY = config('COHERE_API_KEY')
+# COHERE_API_KEY = config('COHERE_API_KEY')
 
 # Application definition
 

@@ -51,6 +51,7 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">Student Dashboard</a>
+                <div class="card-header">Feedback GS System <a href="/">Home</a> </div>
             </div>
         </nav>
 
@@ -69,6 +70,7 @@
                                     <th>Grade</th>
                                     <th>Correctness</th>
                                     <th>Date Submitted</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -80,6 +82,10 @@
                                     <td>{{ evaluation.grade|default:"N/A" }}</td>
                                     <td>{{ evaluation.correctness|yesno:"Correct,Incorrect" }}</td>
                                     <td>{{ evaluation.created_at|date:"Y-m-d H:i:s" }}</td>
+                                    <td>
+                                        <a href="{% url 'evaluation_report' evaluation.id %}" class="btn btn-primary btn-sm">View</a>
+                                     
+                                    </td>
                                 </tr>
                                 {% empty %}
                                 <tr>
