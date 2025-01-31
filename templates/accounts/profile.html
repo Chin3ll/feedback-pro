@@ -168,8 +168,10 @@
                     <i class="bi-envelope me-2"></i> Proceed
                   </a>
               {% elif user.profile.role == "admin" %}
-              <a class="btn btn-outline-primary btn-transition" href="{% url 'dashboard_a' %}">
-                <i class="bi-envelope me-2"></i> Proceed
+            
+
+              <a class="btn btn-outline-primary btn-transition" href="{% url 'admin:accounts_profile_changelist' %}">
+                <i class="bi-envelope me-2"></i> Admin Panel
               </a>
               {% else %}
                   <p>No specific actions available for your role.</p>
