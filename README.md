@@ -27,7 +27,12 @@ $ cd feedbackgenerator
 ### Create a Virtual Environment
 ```sh
 $ python -m venv venv
-$ source venv/bin/activate  # On Windows use: venv\Scripts\activate
+$ source venv/Scripts/activate  # On Windows
+```
+
+```sh
+$ python3 -m venv venv
+$ source venv/bin/activate # On Mac
 ```
 
 ### Install Dependencies
@@ -35,22 +40,9 @@ $ source venv/bin/activate  # On Windows use: venv\Scripts\activate
 $ pip install -r requirements.txt
 ```
 
-### Configure Database
-1. Update `DATABASES` settings in `settings.py`:
-    ```python
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'your_db_name',
-            'USER': 'your_db_user',
-            'PASSWORD': 'your_db_password',
-            'HOST': 'localhost',
-            'PORT': '3306',
-        }
-    }
-    ```
-2. Run migrations:
+1. Run migrations:
     ```sh
+    $ python manage.py makemigrations
     $ python manage.py migrate
     ```
 
@@ -72,14 +64,18 @@ The project will be available at `http://127.0.0.1:8000/`.
 - Navigate to `http://127.0.0.1:8000/admin/`
 - Login with the superuser credentials
 
+### Accessing the Admin dashboard
+- Navigate to `http://127.0.0.1:8000/dashboard-a/`
+- Login with the superuser credentials
+
 ### Submitting an Evaluation (Student View)
 - Login as a student
-- Navigate to `http://127.0.0.1:8000/submit_assignment/`
-- Submit a code file for evaluation
+- Navigate to `http://127.0.0.1:8000/dashboard-s/`
+- View student dashboard
 
 ### Reviewing Submissions (Lecturer View)
-- Navigate to `http://127.0.0.1:8000/view_student_assignments/`
-- View pending and graded evaluations
+- Navigate to `http://127.0.0.1:8000/dashboard-t/`
+- View Tutor dashboard
 
 ## Deployment (Optional)
 To deploy on a live server:
