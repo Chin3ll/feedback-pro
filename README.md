@@ -39,8 +39,31 @@ $ source venv/bin/activate # On Mac
 ```sh
 $ pip install -r requirements.txt
 ```
+### Configure Database
+- Create a new DB in mysql called `feedbackgenerator` as seen here ![alt text](image-13.png)
+```sh 
+$ pip install mysql-connector-python
+```
 
-1. Run migrations:
+1. Update DATABASES settings in settings.py:
+    python
+  ``` DATABASES = {
+        "default": {
+            "ENGINE": "mysql.connector.django",
+            "NAME": "feedbackgenerator",
+            "USER": "root",
+            "PASSWORD": "",
+            "HOST": "localhost",
+            "PORT": "3306",
+            "OPTIONS": {
+                "autocommit": True,
+            },
+        }
+    }
+    ```
+
+
+2. Run migrations:
     ```sh
     $ python manage.py makemigrations
     $ python manage.py migrate
