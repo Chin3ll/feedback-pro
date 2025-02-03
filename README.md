@@ -96,9 +96,9 @@ The project will be available at `http://127.0.0.1:8000/`.
 - Navigate to `http://127.0.0.1:8000/profile/`
 Once on the profile page click on Admin Panel button to enable view the admin panel
 - Admin Panel button ![alt text](image-4.png)
-Next click on the profile model to assign Admin role to your newly created account
+Next click on the profile model to assign Admin role to your newly created account.  Note every newly created will require to be assign a role even a super user will have to assign himself the role of admin when he gets here
 - Asign role to created user ![alt text](image-5.png)
-Next click on any desired user from the list 
+Next click on any desired user from the list. Note every newly created will require to be assign a role even a super user will have to assign himself the role of admin when he gets here
 - User profile list ![alt text](image-11.png)
 Now assign a role to that user options includes (Student, Lecturer, Admin)
 - User profile role ![alt text](image-12.png)
