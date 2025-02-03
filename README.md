@@ -103,12 +103,24 @@ Next click on any desired user from the list. Note every newly created will requ
 Now assign a role to that user options includes (Student, Lecturer, Admin)
 - User profile role ![alt text](image-12.png)
 
-## step Creating new user
+## step Creating new user (Student)
 - Navigate to `http://127.0.0.1:8000/admin/`
 Once on the admin page click on users model ![alt text](image-7.png)
 - Now you'll be taken to this page `http://127.0.0.1:8000/auth/user/`
 Next click on add user + at the top right corner of your screen ![alt text](image-8.png)
 - Now feel in the user details you want to create and click save ![alt text](image-9.png) ![alt text](image-10.png)
+Next Once the user has been created you have to go back to the profile model again to assign a role to that new user you just created
+- User profile list ![alt text](image-11.png)
+Now assign a role to that user options includes (Student, Lecturer, Admin)
+- User profile role ![alt text](image-6.png)
+
+## step Creating new user (Lecturer)
+- Navigate to `http://127.0.0.1:8000/admin/`
+Once on the admin page click on users model ![alt text](image-7.png)
+- Now you'll be taken to this page `http://127.0.0.1:8000/auth/user/`
+Next click on add user + at the top right corner of your screen ![alt text](image-8.png)
+- Now feel in the user details you want to create and click save ![alt text](image-9.png) ![alt text](image-14.png)
+Make for to check mark all three permissions Active, Staff status and Superuser status
 Next Once the user has been created you have to go back to the profile model again to assign a role to that new user you just created
 - User profile list ![alt text](image-11.png)
 Now assign a role to that user options includes (Student, Lecturer, Admin)
