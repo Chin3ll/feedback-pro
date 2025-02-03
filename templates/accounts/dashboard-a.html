@@ -47,6 +47,17 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{% url 'dashboard_a' %}">Admin Dashboard</a>
+
+                <!-- Right-aligned dropdown -->
+                <div class="dropdown ms-auto">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle"></i> Account
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </div>
             </div>
         </nav>
 
@@ -54,8 +65,7 @@
             <div class="col-md-4">
                 <div class="card text-white bg-primary">
                     <div class="card-body">
-                        <h5 class="card-title">Total Students {{ total_students }}  </h5>
-                      
+                        <h5 class="card-title">Total Students {{ total_students }}</h5>
                         <a href="{% url 'students_list' %}" class="btn btn-light">View Students</a>
                     </div>
                 </div>
@@ -63,8 +73,7 @@
             <div class="col-md-4">
                 <div class="card text-white bg-success">
                     <div class="card-body">
-                        <h5 class="card-title">Assignments Submitted {{ assignments_submitted }} </h5>
-                       
+                        <h5 class="card-title">Assignments Submitted {{ assignments_submitted }}</h5>
                         <a href="{% url 'check_student_assignments' %}" class="btn btn-light">View Assignments</a>
                     </div>
                 </div>
@@ -73,19 +82,17 @@
             <div class="col-md-4">
                 <div class="card text-white bg-warning">
                     <div class="card-body">
-                        <h5 class="card-title">Assignments Pending {{ pending_evaluations }} </h5>
-                       
+                        <h5 class="card-title">Assignments Pending {{ pending_evaluations }}</h5>
                         <a href="{% url 'pending_evaluations_list' %}" class="btn btn-light">View Assignments</a>
                     </div>
                 </div>
             </div>
-         
         </div>
 
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">Feedback GS System <a href="/">Home</a> </div>
+                    <div class="card-header">Feedback GS System <a href="/">Home</a></div>
                     <div class="card-body">
                         <table class="table table-bordered">
                             <img src="{% static 'images/pexels-anastasiya-gepp-654466-1462630.jpg' %}" width="400px" height="300px" alt="">
