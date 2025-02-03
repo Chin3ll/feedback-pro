@@ -60,6 +60,37 @@ The project will be available at `http://127.0.0.1:8000/`.
 
 ## Usage
 
+### Starting the project
+## step 1
+- Navigate to `http://127.0.0.1:8000/login/`
+- to login ![alt text](image-1.png)
+
+## step 2
+- Navigate to `http://127.0.0.1:8000/login/`
+- Login with your super user account ![alt text](image.png)
+
+## step 3 Assigning Roles
+- Navigate to `http://127.0.0.1:8000/profile/`
+Once on the profile page click on Admin Panel button to enable view the admin panel
+- Admin Panel button ![alt text](image-4.png)
+Next click on the profile model to assign Admin role to your newly created account
+- Asign role to created user ![alt text](image-5.png)
+Next click on any desired user from the list 
+- User profile list ![alt text](image-11.png)
+Now assign a role to that user options includes (Student, Lecturer, Admin)
+- User profile role ![alt text](image-12.png)
+
+## step Creating new user
+- Navigate to `http://127.0.0.1:8000/admin/`
+Once on the admin page click on users model ![alt text](image-7.png)
+- Now you'll be taken to this page `http://127.0.0.1:8000/auth/user/`
+Next click on add user + at the top right corner of your screen ![alt text](image-8.png)
+- Now feel in the user details you want to create and click save ![alt text](image-9.png) ![alt text](image-10.png)
+Next Once the user has been created you have to go back to the profile model again to assign a role to that new user you just created
+- User profile list ![alt text](image-11.png)
+Now assign a role to that user options includes (Student, Lecturer, Admin)
+- User profile role ![alt text](image-6.png)
+
 ### Accessing the Admin Panel
 - Navigate to `http://127.0.0.1:8000/admin/`
 - Login with the superuser credentials
@@ -68,12 +99,13 @@ The project will be available at `http://127.0.0.1:8000/`.
 - Navigate to `http://127.0.0.1:8000/dashboard-a/`
 - Login with the superuser credentials
 
-### Submitting an Evaluation (Student View)
-- Login as a student
+### Accessing the Student dashboard
+- Login as a student account
 - Navigate to `http://127.0.0.1:8000/dashboard-s/`
 - View student dashboard
 
 ### Reviewing Submissions (Lecturer View)
+-Login as Lecturer account
 - Navigate to `http://127.0.0.1:8000/dashboard-t/`
 - View Tutor dashboard
 
