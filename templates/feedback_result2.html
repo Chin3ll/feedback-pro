@@ -51,6 +51,8 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">Student Dashboard</a>
+
+                
             </div>
         </nav>
 
@@ -67,7 +69,7 @@
                     {% if success %}
                         <div class="success">
                             <p><strong>Feedback:</strong> {{ feedback }}</p>
-                            <!-- <p><strong>GPT Feedback:</strong> {  { gpt_feedback }  }</p> -->
+                            <p><strong>Tutor Feedback:</strong> {  { tutor_feedback }  }</p>
                         </div>
                     {% else %}
                         <div class="error">

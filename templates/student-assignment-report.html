@@ -65,8 +65,8 @@
                         <p><strong>Status:</strong>
                             <span 
                                 class="badge 
-                                {% if evaluation.status == 'submitted' %} bg-success 
-                                {% elif evaluation.status == 'reviewed' %} bg-warning text-dark 
+                                {% if evaluation.status == 'submitted' %} bg-warning text-dark
+                                {% elif evaluation.status == 'reviewed' %} bg-success
                                 {% elif evaluation.status == 'pending' %} bg-danger 
                                 {% endif %}">
                                 {{ evaluation.status|capfirst }}
@@ -87,8 +87,8 @@
                             {% endif %}
                         </p>
                         <hr>
-                        <!-- <h6><strong>GPT Feedback:</strong></h6>
-                        <p>{{ evaluation.gpt_feedback }}</p> -->
+                        <h6><strong>Tutor Feedback:</strong></h6>
+                        <p>{{ evaluation.tutor_feedback }}</p>
                         <hr>
                         <h6><strong>Correctness:</strong> {{ evaluation.correctness|yesno:"Correct,Incorrect" }}</h6>
                         <h6><strong>Time Complexity:</strong> {{ evaluation.time_complexity }}</h6>

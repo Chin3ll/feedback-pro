@@ -18,10 +18,10 @@ class Evaluation(models.Model):
     )
     student_code = models.TextField(help_text="The student's submitted code.")
     feedback = models.TextField(help_text="Detailed feedback for the student's submission.")
-    gpt_feedback = models.TextField(
+    tutor_feedback = models.TextField(
         null=True, 
         blank=True, 
-        help_text="GPT-generated feedback for the submission."
+        help_text="Tutor specific feedback for the submission."
     )
     correctness = models.BooleanField(
         default=False, 

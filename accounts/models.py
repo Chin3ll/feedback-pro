@@ -7,11 +7,11 @@ from django.dispatch import receiver
 class Profile(models.Model):
     ROLE_CHOICES = [
         ('Admin', 'Admin'),
-        ('Lecturer', 'Lecturer'),
+        ('Tutor', 'Tutor'),
         ('Student', 'Student'),
     ]
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    role = models.CharField(max_length=20, choices=(('student', 'Student'), ('lecturer', 'Lecturer'), ('admin', 'Admin')))
+    role = models.CharField(max_length=20, choices=(('student', 'Student'), ('tutor', 'Tutor'), ('admin', 'Admin')))
 
     def __str__(self):
         return f"{self.user.username} - {self.role}"
