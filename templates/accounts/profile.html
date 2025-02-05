@@ -159,7 +159,7 @@
                   <a class="btn btn-outline-primary btn-transition" href="{% url 'dashboard_s' %}">
                     <i class="bi-envelope me-2"></i> Proceed
                   </a>
-              {% elif user.profile.role == "lecturer" %}
+              {% elif user.profile.role == "tutor" %}
 
             
                   <a class="btn btn-outline-primary btn-transition" href="{% url 'dashboard_t' %}">
@@ -268,7 +268,7 @@
             <a class="link link-collapse" data-bs-toggle="collapse" href="#collapseDescriptionSection" role="button" aria-expanded="false" aria-controls="collapseDescriptionSection">
               {% if user.profile.role == "student" %}
               <a href="{% url 'dashboard_s' %}" class="btn btn-primary">Submit Assignment</a>
-          {% elif user.profile.role == "lecturer" %}
+          {% elif user.profile.role == "tutor" %}
               <a href="{% url 'dashboard_t' %}" class="btn btn-info">View Student Assignments</a>
           {% elif user.profile.role == "admin" %}
               <a href="{% url 'dashboard_a' %}" class="btn btn-warning">Manage All Users</a>

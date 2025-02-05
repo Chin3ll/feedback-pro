@@ -48,7 +48,7 @@
 
     {% block sidebar %} {% include 'accounts/admin-sidebar.html' %} {% endblock sidebar %}
 
-    {% elif user.profile.role == "lecturer" %}
+    {% elif user.profile.role == "tutor" %}
     {% block tutorsidebar %} {% include 'accounts/tutor-sidebar.html' %} {% endblock tutorsidebar %}
 
     {% endif %}
