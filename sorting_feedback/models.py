@@ -16,51 +16,27 @@ class Evaluation(models.Model):
         related_name='evaluations', 
         help_text="The student who submitted the evaluation."
     )
-    student_code = models.TextField(help_text="The student's submitted code.")
+    student_code = models.TextField(blank=True, null=True, help_text="The student's submitted code.")
+    submission_file = models.FileField(
+        upload_to='submissions/', 
+        blank=True, 
+        null=True, 
+        help_text="File containing the student's submitted code."
+    )
     feedback = models.TextField(help_text="Detailed feedback for the student's submission.")
-    tutor_feedback = models.TextField(
-        null=True, 
-        blank=True, 
-        help_text="Tutor specific feedback for the submission."
-    )
-    correctness = models.BooleanField(
-        default=False, 
-        help_text="Indicates whether the submission is correct."
-    )
-    time_complexity = models.CharField(
-        max_length=50, 
-        default="Unknown", 
-        help_text="Time complexity of the submitted solution."
-    )
-    grade = models.FloatField(
-        null=True, 
-        blank=True, 
-        help_text="Grade awarded for the evaluation (out of 100)."
-    )
+    tutor_feedback = models.TextField(null=True, blank=True, help_text="Tutor specific feedback.")
+    correctness = models.BooleanField(default=False, help_text="Indicates whether the submission is correct.")
+    time_complexity = models.CharField(max_length=50, default="Unknown", help_text="Time complexity of the submitted solution.")
+    grade = models.FloatField(null=True, blank=True, help_text="Grade awarded for the evaluation (out of 100).")
     status = models.CharField(
         max_length=50, 
-        choices=[
-            ('submitted', 'Submitted'),
-            ('reviewed', 'Reviewed'),
-            ('pending', 'Pending Review'),
-        ],
+        choices=[('submitted', 'Submitted'), ('reviewed', 'Reviewed'), ('pending', 'Pending Review')],
         default='pending',
         help_text="Current status of the evaluation."
     )
-    plagiarism_score = models.FloatField(
-        default=0.0, 
-        help_text="Plagiarism percentage score."
-    )
-    is_plagiarized = models.BooleanField(
-        default=False, 
-        help_text="Indicates if plagiarism is detected."
-    )
-    required_construct = models.CharField(
-        max_length=50, 
-        null=True, 
-        blank=True, 
-        help_text="The mandatory construct required in the submission (e.g., 'while loop', 'function')."
-    )
+    plagiarism_score = models.FloatField(default=0.0, help_text="Plagiarism percentage score.")
+    is_plagiarized = models.BooleanField(default=False, help_text="Indicates if plagiarism is detected.")
+    required_construct = models.CharField(max_length=50, null=True, blank=True, help_text="The required construct.")
     created_at = models.DateTimeField(auto_now_add=True, help_text="Timestamp when the evaluation was created.")
 
     def __str__(self):

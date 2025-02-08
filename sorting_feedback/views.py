@@ -142,39 +142,33 @@ def submit_code(request):
     if request.method == "POST":
         try:
             title = request.POST.get('title', '').strip()
-            submission_code = request.POST.get('submission_code', '').strip()
             student = request.user
+            submission_file = request.FILES.get('submission_file')
 
             if not title:
                 return JsonResponse({"success": False, "error": "Title is required."})
-            if not submission_code:
-                return JsonResponse({"success": False, "error": "Submission code is required."})
 
-            # Get the latest evaluation criteria set by the tutor
-            criteria = EvaluationCriteria.objects.order_by('-last_updated').first()
-            if not criteria:
-                return JsonResponse({"success": False, "error": "No evaluation criteria set."})
+            if not submission_file:
+                return JsonResponse({"success": False, "error": "Submission file is required."})
+
+            # Read file content
+            file_content = submission_file.read().decode('utf-8')
+
+            # Get evaluation criteria
+            criteria = get_object_or_404(EvaluationCriteria, pk=1)
 
             # Evaluate the code
-            feedback = evaluate_code_with_criteria(submission_code, criteria)
-
-            # Check for plagiarism
-            plagiarism_score = check_plagiarism(submission_code, student)
-            is_plagiarized = plagiarism_score > 80  # Flag as plagiarized if above 80%
-
-            if is_plagiarized:
-                feedback["feedback"] += f"\n⚠️ Plagiarism detected! Similarity: {plagiarism_score:.2f}%."
+            feedback = evaluate_code_with_criteria(file_content, criteria)
 
             # Save evaluation to the database
             evaluation = Evaluation.objects.create(
                 title=title,
                 student=student,
-                student_code=submission_code,
+                student_code=file_content,  # Save code content
+                submission_file=submission_file,  # Save the uploaded file
                 feedback=feedback["feedback"],
                 correctness=feedback["correctness"],
                 time_complexity=feedback["time_complexity"],
-                plagiarism_score=plagiarism_score,
-                is_plagiarized=is_plagiarized,
                 status='submitted'
             )
 
@@ -185,11 +179,9 @@ def submit_code(request):
             })
 
         except Exception as e:
-            logger.error(f"Error during code submission: {e}")
             return render(request, "feedback_result.html", {"success": False, "error": str(e)})
 
     return render(request, "submit_code_form.html")
-
 @login_required
 def dashboard(request):
     submissions = Submission.objects.filter(user=request.user).select_related('evaluation')
