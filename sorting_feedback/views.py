@@ -12,6 +12,8 @@ import ast
 import subprocess
 from django.contrib.auth.models import User  # Ensure the User model is imported
 import logging
+from difflib import SequenceMatcher
+from django.db.models import Q
 logger = logging.getLogger(__name__)
 
 def home(request):
@@ -25,66 +27,23 @@ def assessmentchoice(request):
     return render(request, 'assessment_choice.html')
 
 
-# @login_required
-# def generate_feedback(prompt):
-    try:
-        response = co.generate(
-            model='xlarge',
-            prompt=prompt,
-            max_tokens=100
-        )
-        return response.generations[0].text
-    except AttributeError as e:
-        # Log the error for debugging
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.error(f"Error in generate_feedback: {e}")
-        raise e
-    except Exception as e:
-        # Catch all other exceptions
-        raise e
 
-# logging.basicConfig(level=logging.DEBUG)
-# logger = logging.getLogger(__name__)
-# @login_required
+def calculate_similarity(code1, code2):
+    """Calculate similarity using SequenceMatcher (Levenshtein-like)."""
+    return SequenceMatcher(None, code1, code2).ratio() * 100  # Convert to percentage
 
+def check_plagiarism(new_code, student):
+    """Check plagiarism by comparing new submission with previous ones."""
+    existing_submissions = Evaluation.objects.exclude(student=student)  # Exclude current student's own work
+    max_similarity = 0  # Store the highest similarity score
 
+    for submission in existing_submissions:
+        similarity = calculate_similarity(new_code, submission.student_code)
+        if similarity > max_similarity:
+            max_similarity = similarity
 
-# def evaluate_code(submission_code):
-#     feedback = {
-#         "feedback": [],
-#         "correctness": True
-#     }
+    return max_similarity  # Return highest similarity score
 
-#     # Fetch active criteria
-#     active_criteria = EvaluationCriteria.objects.filter(is_active=True).values_list('name', flat=True)
-
-#     # Syntax Check
-#     if "Syntax Check" in active_criteria:
-#         try:
-#             ast.parse(submission_code)  # Parse the code to check syntax
-#             feedback["feedback"].append("Code has valid syntax.")
-#         except SyntaxError as e:
-#             feedback["feedback"].append(f"Syntax error: {e.msg} at line {e.lineno}.")
-#             feedback["correctness"] = False
-
-#     # Indentation Check
-#     if "Indentation Check" in active_criteria:
-#         lines = submission_code.split("\n")
-#         for i, line in enumerate(lines):
-#             if line and not line.startswith(" ") and line != line.lstrip():
-#                 feedback["feedback"].append(f"Improper indentation at line {i + 1}: Use multiples of 4 spaces.")
-#                 feedback["correctness"] = False
-#                 break
-
-#     # Comment Check
-#     if "Comment Check" in active_criteria:
-#         if "#" not in submission_code:
-#             feedback["feedback"].append("Code lacks comments. Consider adding comments for clarity.")
-
-#     return feedback
-
-# import ast
 
 def evaluate_code_with_criteria(code, criteria):
     feedback = []
@@ -122,6 +81,7 @@ def evaluate_code_with_criteria(code, criteria):
             if leading_spaces % 4 != 0:
                 feedback.append(f"Line {line_no}: Indentation should be a multiple of 4 spaces.")
                 correctness = False
+    
 
     # Comment Check
     if criteria.check_comments:
@@ -198,6 +158,13 @@ def submit_code(request):
             # Evaluate the code
             feedback = evaluate_code_with_criteria(submission_code, criteria)
 
+            # Check for plagiarism
+            plagiarism_score = check_plagiarism(submission_code, student)
+            is_plagiarized = plagiarism_score > 80  # Flag as plagiarized if above 80%
+
+            if is_plagiarized:
+                feedback["feedback"] += f"\n⚠️ Plagiarism detected! Similarity: {plagiarism_score:.2f}%."
+
             # Save evaluation to the database
             evaluation = Evaluation.objects.create(
                 title=title,
@@ -206,6 +173,8 @@ def submit_code(request):
                 feedback=feedback["feedback"],
                 correctness=feedback["correctness"],
                 time_complexity=feedback["time_complexity"],
+                plagiarism_score=plagiarism_score,
+                is_plagiarized=is_plagiarized,
                 status='submitted'
             )
 

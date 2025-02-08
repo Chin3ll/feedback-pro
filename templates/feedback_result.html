@@ -42,8 +42,8 @@
 
 <div class="sidebar">
     <h4 class="text-center py-3">Dashboard</h4>
-    <a href="#" class="active">Submit Assignment</a>
-    <a href="#">Check Grade and Feedback</a>
+    <a href="{% url 'submit_assignment' %}" class="active">Submit Assignment</a>
+    <a href="{% url 'student_submitted_assignment' %}">Check Grade and Feedback</a>
 </div>
 
 <div class="main-content">
@@ -51,6 +51,17 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">Student Dashboard</a>
+
+                <div class="dropdown ms-auto">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle"></i> Account
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </div>
+
             </div>
         </nav>
 
@@ -73,6 +84,16 @@
                           <p><strong>Error:</strong> {{ error }}</p>
                       </div>
                   {% endif %}
+
+                  <div class="alert alert-info">
+                    <p><strong>Plagiarism Check:</strong></p>
+                    <p>Plagiarism Score: {{ evaluation.plagiarism_score }}%</p>
+                    {% if evaluation.is_plagiarized %}
+                        <p class="text-danger">⚠️ This submission is flagged for plagiarism.</p>
+                    {% else %}
+                        <p class="text-success">✅ No plagiarism detected.</p>
+                    {% endif %}
+                </div>
               
                   <a href="{% url 'submit_assignment' %}">Submit Another Code</a>
               </div>

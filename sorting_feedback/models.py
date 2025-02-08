@@ -47,11 +47,24 @@ class Evaluation(models.Model):
         default='pending',
         help_text="Current status of the evaluation."
     )
+    plagiarism_score = models.FloatField(
+        default=0.0, 
+        help_text="Plagiarism percentage score."
+    )
+    is_plagiarized = models.BooleanField(
+        default=False, 
+        help_text="Indicates if plagiarism is detected."
+    )
+    required_construct = models.CharField(
+        max_length=50, 
+        null=True, 
+        blank=True, 
+        help_text="The mandatory construct required in the submission (e.g., 'while loop', 'function')."
+    )
     created_at = models.DateTimeField(auto_now_add=True, help_text="Timestamp when the evaluation was created.")
 
     def __str__(self):
         return f"{self.title} - {self.student.username} - {self.created_at}"
-
 
 class EvaluationCriteria(models.Model):
     check_syntax = models.BooleanField(default=True, help_text="Check for syntactic accuracy.")
