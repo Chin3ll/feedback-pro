@@ -1,22 +1,18 @@
-# import cohere
+
 from .evaluation import evaluate_code
-# from .gpt_feedback import generate_feedback
 
 from django.contrib.auth.decorators import login_required
 from .models import Submission, Evaluation
 from django.shortcuts import render
 import logging
 from django.http import JsonResponse
-# from .utils import generate_feedback
 from django.shortcuts import get_object_or_404
 from .models import EvaluationCriteria, Evaluation
 import ast
 import subprocess
 from django.contrib.auth.models import User  # Ensure the User model is imported
-
-# Initialize Cohere client
-# co = cohere.Client('ZIFDjiIznKChVeU5Q1v2z25sKYTI8nQFTV5Q4MYL')  # Replace with your API key
-
+import logging
+logger = logging.getLogger(__name__)
 
 def home(request):
     user = request.user
@@ -29,8 +25,8 @@ def assessmentchoice(request):
     return render(request, 'assessment_choice.html')
 
 
-@login_required
-def generate_feedback(prompt):
+# @login_required
+# def generate_feedback(prompt):
     try:
         response = co.generate(
             model='xlarge',
@@ -48,71 +44,74 @@ def generate_feedback(prompt):
         # Catch all other exceptions
         raise e
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
-@login_required
+# logging.basicConfig(level=logging.DEBUG)
+# logger = logging.getLogger(__name__)
+# @login_required
 
 
 
-def evaluate_code(submission_code):
-    feedback = {
-        "feedback": [],
-        "correctness": True
-    }
+# def evaluate_code(submission_code):
+#     feedback = {
+#         "feedback": [],
+#         "correctness": True
+#     }
 
-    # Fetch active criteria
-    active_criteria = EvaluationCriteria.objects.filter(is_active=True).values_list('name', flat=True)
+#     # Fetch active criteria
+#     active_criteria = EvaluationCriteria.objects.filter(is_active=True).values_list('name', flat=True)
 
-    # Syntax Check
-    if "Syntax Check" in active_criteria:
-        try:
-            ast.parse(submission_code)  # Parse the code to check syntax
-            feedback["feedback"].append("Code has valid syntax.")
-        except SyntaxError as e:
-            feedback["feedback"].append(f"Syntax error: {e.msg} at line {e.lineno}.")
-            feedback["correctness"] = False
+#     # Syntax Check
+#     if "Syntax Check" in active_criteria:
+#         try:
+#             ast.parse(submission_code)  # Parse the code to check syntax
+#             feedback["feedback"].append("Code has valid syntax.")
+#         except SyntaxError as e:
+#             feedback["feedback"].append(f"Syntax error: {e.msg} at line {e.lineno}.")
+#             feedback["correctness"] = False
 
-    # Indentation Check
-    if "Indentation Check" in active_criteria:
-        lines = submission_code.split("\n")
-        for i, line in enumerate(lines):
-            if line and not line.startswith(" ") and line != line.lstrip():
-                feedback["feedback"].append(f"Improper indentation at line {i + 1}: Use multiples of 4 spaces.")
-                feedback["correctness"] = False
-                break
+#     # Indentation Check
+#     if "Indentation Check" in active_criteria:
+#         lines = submission_code.split("\n")
+#         for i, line in enumerate(lines):
+#             if line and not line.startswith(" ") and line != line.lstrip():
+#                 feedback["feedback"].append(f"Improper indentation at line {i + 1}: Use multiples of 4 spaces.")
+#                 feedback["correctness"] = False
+#                 break
 
-    # Comment Check
-    if "Comment Check" in active_criteria:
-        if "#" not in submission_code:
-            feedback["feedback"].append("Code lacks comments. Consider adding comments for clarity.")
+#     # Comment Check
+#     if "Comment Check" in active_criteria:
+#         if "#" not in submission_code:
+#             feedback["feedback"].append("Code lacks comments. Consider adding comments for clarity.")
 
-    return feedback
+#     return feedback
+
+# import ast
 
 def evaluate_code_with_criteria(code, criteria):
-    import ast
     feedback = []
     correctness = True
 
-    # Check Syntax
+    try:
+        tree = ast.parse(code)  # Parse the code for syntax errors
+    except SyntaxError as syntax_error:
+        feedback.append(f"Syntax error: {syntax_error}")
+        return {
+            "feedback": "\n".join(feedback),
+            "correctness": False,
+            "time_complexity": "Not Applicable"
+        }
+
+    # Syntax Check
     if criteria.check_syntax:
         try:
-            ast.parse(code)  # Parse the code for syntax errors
-            feedback.append("Syntax is correct.")
-            
-            # Additional Compilation Check
-            try:
-                compile(code, "<string>", "exec")
-            except Exception as exec_error:
-                feedback.append(f"Code compilation error: {exec_error}")
-                correctness = False
-        except SyntaxError as syntax_error:
-            feedback.append(f"Syntax error: {syntax_error}")
+            compile(code, "<string>", "exec")
+            feedback.append("Code has valid syntax.")
+        except Exception as exec_error:
+            feedback.append(f"Code compilation error: {exec_error}")
             correctness = False
 
-    # Check Indentation
+    # Indentation Check
     if criteria.check_indentation:
         lines = code.split("\n")
-        indentation_stack = [0]
         for line_no, line in enumerate(lines, start=1):
             stripped = line.lstrip()
             if not stripped or stripped.startswith("#"):
@@ -124,21 +123,7 @@ def evaluate_code_with_criteria(code, criteria):
                 feedback.append(f"Line {line_no}: Indentation should be a multiple of 4 spaces.")
                 correctness = False
 
-            if stripped.endswith(":"):
-                if leading_spaces > indentation_stack[-1]:
-                    indentation_stack.append(leading_spaces)
-                else:
-                    feedback.append(f"Line {line_no}: Expected increased indentation for a block after ':'.")
-                    correctness = False
-            else:
-                while indentation_stack and leading_spaces < indentation_stack[-1]:
-                    indentation_stack.pop()
-
-                if leading_spaces != indentation_stack[-1] and len(indentation_stack) > 1:
-                    feedback.append(f"Line {line_no}: Misaligned indentation.")
-                    correctness = False
-
-    # Check Comments
+    # Comment Check
     if criteria.check_comments:
         comment_count = sum(1 for line in code.split("\n") if line.strip().startswith("#"))
         if comment_count < criteria.min_comments:
@@ -147,13 +132,51 @@ def evaluate_code_with_criteria(code, criteria):
         else:
             feedback.append(f"Comments are sufficient: {comment_count} comment(s).")
 
+    # **Construct Validation: Ensure Required Constructs Exist**
+    construct_mapping = {
+        "while loop": ast.While,
+        "for loop": ast.For,
+        "function": ast.FunctionDef,
+        "lambda function": ast.Lambda,
+        "list comprehension": ast.ListComp,
+        "dictionary comprehension": ast.DictComp,
+        "set comprehension": ast.SetComp,
+        "try-except": ast.Try,
+        "class": ast.ClassDef,
+        "assignment": ast.Assign,
+        "return statement": ast.Return,
+        "if statement": ast.If,
+        "import statement": ast.Import,
+        "import from": ast.ImportFrom,
+        "dictionary": ast.Dict,
+        "list": ast.List,
+        "tuple": ast.Tuple,
+        "set": ast.Set
+    }
+
+    missing_constructs = []
+    
+    for required_construct in criteria.required_constructs:
+        construct_node = construct_mapping.get(required_construct.lower())
+
+        if construct_node:
+            if not any(isinstance(node, construct_node) for node in ast.walk(tree)):
+                missing_constructs.append(required_construct)
+        else:
+            feedback.append(f"Warning: '{required_construct}' is not a recognized construct.")
+
+    if missing_constructs:
+        feedback.append(f"Error: The code must contain the following construct(s): {', '.join(missing_constructs)}.")
+        correctness = False
+
+    if correctness:
+        feedback.append("Code evaluation successful.")
+
     return {
         "feedback": "\n".join(feedback),
         "correctness": correctness,
         "time_complexity": "Not Applicable"
     }
-
-
 @login_required
 def submit_code(request):
     if request.method == "POST":
@@ -167,8 +190,10 @@ def submit_code(request):
             if not submission_code:
                 return JsonResponse({"success": False, "error": "Submission code is required."})
 
-            # Get evaluation criteria
-            criteria = get_object_or_404(EvaluationCriteria, pk=1)  # Assuming a single criteria instance
+            # Get the latest evaluation criteria set by the tutor
+            criteria = EvaluationCriteria.objects.order_by('-last_updated').first()
+            if not criteria:
+                return JsonResponse({"success": False, "error": "No evaluation criteria set."})
 
             # Evaluate the code
             feedback = evaluate_code_with_criteria(submission_code, criteria)
@@ -195,73 +220,6 @@ def submit_code(request):
             return render(request, "feedback_result.html", {"success": False, "error": str(e)})
 
     return render(request, "submit_code_form.html")
-
-# @login_required
-# def submit_code(request):
-#     if request.method == "POST":
-#         try:
-#             # Retrieve POST data
-#             title = request.POST.get('title', '').strip()
-#             submission_code = request.POST.get('submission_code', '').strip()
-#             student = request.user  # Current logged-in user
-            
-#             if not title:
-#                 return JsonResponse({"success": False, "error": "Title is required."})
-#             if not submission_code:
-#                 return JsonResponse({"success": False, "error": "Submission code is required."})
-
-#             logger.debug(f"Submission Title: {title}")
-#             logger.debug(f"Submission Code: {submission_code}")
-
-#             # Evaluate the code
-#             feedback = evaluate_code(submission_code)
-#             feedback_message = feedback.get('feedback', 'No feedback available.')
-#             correctness = feedback.get('correctness', False)
-#             time_complexity = feedback.get('time_complexity', "Unknown")
-
-#             # Generate GPT-style feedback
-#             gpt_feedback = "No GPT feedback available."
-#             try:
-#                 prompt = f"Evaluate the following sorting algorithm implementation:\n{submission_code}"
-#                 gpt_feedback = generate_feedback(prompt)
-#             except Exception as e:
-#                 gpt_feedback = f"An error occurred while generating GPT feedback: {str(e)}"
-#                 logger.error(f"GPT feedback generation error: {e}")
-
-#             # Save evaluation to the database
-#             evaluation = Evaluation.objects.create(
-#                 title=title,
-#                 student=student,
-#                 student_code=submission_code,
-#                 feedback=feedback_message,
-#                 gpt_feedback=gpt_feedback,
-#                 correctness=correctness,
-#                 time_complexity=time_complexity,
-#                 status='submitted'  # Default status on submission
-#             )
-
-#             logger.debug(f"Evaluation saved: {evaluation}")
-
-#             # Render feedback result page
-#             return render(request, "feedback_result.html", {
-#                 "success": True,
-#                 "feedback": feedback_message,
-#                 "gpt_feedback": gpt_feedback,
-#                 "evaluation": evaluation
-#             })
-
-#         except Exception as e:
-#             logger.error(f"Error during code submission: {e}")
-#             return render(request, "feedback_result.html", {
-#                 "success": False,
-#                 "error": str(e)
-#             })
-#     else:
-#         # Render the code submission form
-#         return render(request, "feedback_result.html")
-
-
-
 
 @login_required
 def dashboard(request):

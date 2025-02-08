@@ -62,10 +62,10 @@
                        
                 <div class="col-md-8">
                   <h1>Feedback Results</h1>
-
+                  
                   {% if success %}
                       <div class="success">
-                          <p><strong>Feedback:</strong> {{ feedback }}</p>
+                          <p><strong class="badge text-bg-info">Feedback: Hello, {{ request.user.username }}! 👩‍💻 this is the report for your submission:</strong> {{ feedback }}</p>
                           <!-- <p><strong>Tutor Feedback:</strong> {  { tutor_feedback }  }</p> -->
                       </div>
                   {% else %}

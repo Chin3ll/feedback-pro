@@ -68,6 +68,34 @@
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card">
+                    <div class="card-header bg-info text-white">Evaluation Criteria</div>
+                    <div class="card-body">
+                        {% if criteria %}
+                            <p><strong>Your submission will be evaluated based on the following criteria:</strong></p>
+                            <ul>
+                                {% if criteria.check_syntax %} <li>✅ Syntax Check: Your code must be syntactically correct.</li> {% endif %}
+                                {% if criteria.check_indentation %} <li>✅ Indentation Check: Your code must follow proper indentation (4 spaces per level).</li> {% endif %}
+                                {% if criteria.check_comments %} <li>✅ Comment Check: Your code must have at least <strong>{{ criteria.min_comments }}</strong> comments.</li> {% endif %}
+                                
+                                {% if criteria.required_constructs %}
+                                    <li>✅ Required Constructs:
+                                        <ul>
+                                            {% for construct in criteria.required_constructs %}
+                                                <li>⚠️ Your code must include a <strong>{{ construct }}</strong>.</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        {% else %}
+                            <p class="text-danger">⚠️ No evaluation criteria set by the tutor.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card">
                     <div class="card-header">Assessment Portal</div>
                     <div class="card-body">
                         <form method="POST" action="{% url 'submit_code' %}">
@@ -86,6 +114,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 

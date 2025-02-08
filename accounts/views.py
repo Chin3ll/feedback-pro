@@ -7,12 +7,16 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-from sorting_feedback.models import Evaluation
+from sorting_feedback.models import Evaluation, EvaluationCriteria
 from django.contrib.auth.decorators import login_required
 
-
 def submit_assignment(request):
-    return render(request, 'dashboard-submit-assignment.html')
+    # Fetch the latest evaluation criteria
+    criteria = EvaluationCriteria.objects.order_by('-last_updated').first()
+
+    return render(request, 'dashboard-submit-assignment.html', {
+        'criteria': criteria
+    })
 
 def manage_users(request):
     return render(request, 'manage_users.html')
@@ -141,35 +145,7 @@ def profile(request):
     is_logged_in = user.is_authenticated
     return render(request, 'accounts/profile.html', {'is_logged_in': is_logged_in, 'user': user})
 
-# Registration View
-# def register(request):
-#     if request.method == 'POST':
-#         username = request.POST['username']
-#         email = request.POST['email']
-#         password1 = request.POST['password1']
-#         password2 = request.POST['password2']
-#         role = request.POST['role']
 
-#         if password1 != password2:
-#             messages.error(request, "Passwords do not match!")
-#             return redirect('register')
-
-#         if User.objects.filter(username=username).exists():
-#             messages.error(request, "Username already exists!")
-#             return redirect('register')
-
-#         if User.objects.filter(email=email).exists():
-#             messages.error(request, "Email already registered!")
-#             return redirect('register')
-
-#         # Create user with role
-#         user = User.objects.create_user(username=username, email=email, password=password1)
-#         user.profile.role = role  # Set the role (assumes profile extension)
-#         user.save()
-#         messages.success(request, "Account created successfully!")
-#         return redirect('login')
-
-#     return render(request, 'accounts/register.html')
 
 
 def students_list(request):
