@@ -90,41 +90,41 @@ The project will be available at `http://127.0.0.1:8000/`.
 
 ## step 2
 - Navigate to `http://127.0.0.1:8000/login/`
-- Login with your super user account ![alt text](image.png)
+- Login with your super user account ![alt text](zreadmeimages/image.png)
 
 ## step 3 Assigning Roles
 - Navigate to `http://127.0.0.1:8000/profile/`
 Once on the profile page click on Admin Panel button to enable view the admin panel
-- Admin Panel button ![alt text](image-4.png)
+- Admin Panel button ![alt text](zreadmeimages/image-4.png)
 Next click on the profile model to assign Admin role to your newly created account.  Note every newly created will require to be assign a role even a super user will have to assign himself the role of admin when he gets here
-- Asign role to created user ![alt text](image-5.png)
+- Asign role to created user ![alt text](zreadmeimages/image-5.png)
 Next click on any desired user from the list. Note every newly created will require to be assign a role even a super user will have to assign himself the role of admin when he gets here
-- User profile list ![alt text](image-11.png)
+- User profile list ![alt text](zreadmeimages/image-11.png)
 Now assign a role to that user options includes (Student, Lecturer, Admin)
-- User profile role ![alt text](image-12.png)
+- User profile role ![alt text](zreadmeimages/image-12.png)
 
 ## step Creating new user (Student)
 - Navigate to `http://127.0.0.1:8000/admin/`
-Once on the admin page click on users model ![alt text](image-7.png)
+Once on the admin page click on users model ![alt text](zreadmeimages/image-7.png)
 - Now you'll be taken to this page `http://127.0.0.1:8000/auth/user/`
-Next click on add user + at the top right corner of your screen ![alt text](image-8.png)
-- Now feel in the user details you want to create and click save ![alt text](image-9.png) ![alt text](image-10.png)
+Next click on add user + at the top right corner of your screen ![alt text](zreadmeimages/image-8.png)
+- Now feel in the user details you want to create and click save ![alt text](zreadmeimages/image-9.png) ![alt text](zreadmeimages/image-10.png)
 Next Once the user has been created you have to go back to the profile model again to assign a role to that new user you just created
-- User profile list ![alt text](image-11.png)
+- User profile list ![alt text](zreadmeimages/image-11.png)
 Now assign a role to that user options includes (Student, Lecturer, Admin)
-- User profile role ![alt text](image-6.png)
+- User profile role ![alt text](zreadmeimages/image-6.png)
 
 ## step Creating new user (Lecturer)
 - Navigate to `http://127.0.0.1:8000/admin/`
-Once on the admin page click on users model ![alt text](image-7.png)
+Once on the admin page click on users model ![alt text](zreadmeimages/image-7.png)
 - Now you'll be taken to this page `http://127.0.0.1:8000/auth/user/`
-Next click on add user + at the top right corner of your screen ![alt text](image-8.png)
-- Now feel in the user details you want to create and click save ![alt text](image-9.png) ![alt text](image-14.png)
+Next click on add user + at the top right corner of your screen ![alt text](zreadmeimages/image-8.png)
+- Now feel in the user details you want to create and click save ![alt text](zreadmeimages/image-9.png) ![alt text](zreadmeimages/image-14.png)
 Make for to check mark all three permissions Active, Staff status and Superuser status
 Next Once the user has been created you have to go back to the profile model again to assign a role to that new user you just created
-- User profile list ![alt text](image-11.png)
+- User profile list ![alt text](zreadmeimages/image-11.png)
 Now assign a role to that user options includes (Student, Lecturer, Admin)
-- User profile role ![alt text](image-6.png)
+- User profile role ![alt text](zreadmeimages/image-6.png)
 
 ### Accessing the Admin Panel
 - Navigate to `http://127.0.0.1:8000/admin/`
