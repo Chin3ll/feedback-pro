@@ -1,10 +1,7 @@
-
-
 {% load static %}
 
-
 <!doctype html>
-<html lang="en" data-bs-theme="">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,101 +25,68 @@
     <title>Feedback Generator</title>
     
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-156446909-1"></script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag("js", new Date());gtag("config", "UA-156446909-1");</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-156446909-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "UA-156446909-1");
+    </script>
   </head>
   <body class="d-flex align-items-center bg-auth border-top border-top-2 border-primary">
 
-    <!-- CONTENT
-    ================================================== -->
-    <div class="container">
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm w-100 position-fixed top-0">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'home' %}">🏠 Home</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <div class="container mt-5 pt-5"> <!-- Added padding to push content below navbar -->
       <div class="row align-items-center">
         <div class="col-12 col-md-6 offset-xl-2 offset-md-1 order-md-2 mb-5 mb-md-0">
-
-          <!-- Image -->
           <div class="text-center">
             <img src="{% static 'images/happiness.svg' %}" alt="..." class="img-fluid">
           </div>
-
         </div>
         <div class="col-12 col-md-5 col-xl-4 order-md-1 my-5">
+          <h1 class="display-4 text-center mb-3">Sign In</h1>
+          <p class="text-body-secondary text-center mb-5">Your gateway to our intuitive and user-friendly dashboard.</p>
 
-          <!-- Heading -->
-          <h1 class="display-4 text-center mb-3">
-            Sign up
-          </h1>
-
-          <!-- Subheading -->
-          <p class="text-body-secondary text-center mb-5">
-            Free access to our dashboard.
-          </p>
-
-          <!-- Form -->
           <form method="POST">
-
             {% csrf_token %}
-
-            <!-- Email address -->
             <div class="form-group">
-
-              <!-- Label -->
-              <label class="form-label">
-                Username
-              </label>
-
-              <!-- Input -->
-              <input name="username" type="text" class="form-control" placeholder="Enter your username" required >
-
+              <label class="form-label">Username</label>
+              <input name="username" type="text" class="form-control" placeholder="Enter your username" required>
             </div>
-
-            <!-- Password -->
             <div class="form-group">
-
-              <!-- Label -->
-              <label class="form-label">
-                Password
-              </label>
-
-              <!-- Input group -->
+              <label class="form-label">Password</label>
               <div class="input-group input-group-merge">
-
-                <!-- Input -->
-                <input class="form-control" name="password"  type="password" placeholder="Enter your password" required>
-
-                <!-- Icon -->
+                <input class="form-control" name="password" type="password" placeholder="Enter your password" required>
                 <span class="input-group-text">
                   <i class="fe fe-eye"></i>
                 </span>
-
               </div>
             </div>
-
-            <!-- Submit -->
-            <button type="submit" class="btn btn-lg w-100 btn-primary mb-3">
-             Login
-            </button>
-
-          
-          
-
+            <button type="submit" class="btn btn-lg w-100 btn-primary mb-3">Login</button>
           </form>
 
           {% for message in messages %}
           <div class="alert alert-info mt-3">{{ message }}</div>
           {% endfor %}
 
+          <a href="{% url 'password_reset' %}">Forgot Password?</a>
         </div>
-      </div> <!-- / .row -->
-    </div> <!-- / .container -->
+      </div>
+    </div>
 
     <!-- JAVASCRIPT -->
-    <!-- Map JS -->
     <script src='https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js'></script>
-    
-    <!-- Vendor JS -->
     <script src="{% static 'js/vendor.bundle.js' %}"></script>
-    
-    <!-- Theme JS -->
     <script src="{% static 'js/theme.bundle.js' %}"></script>
-
   </body>
 </html>

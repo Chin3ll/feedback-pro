@@ -19,6 +19,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 from decouple import config
+from django.contrib.sites.shortcuts import get_current_site
+
 
 # COHERE_API_KEY = config('COHERE_API_KEY')
 
@@ -32,7 +34,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'sorting_feedback',
-    'accounts'
+    'accounts',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
 
 MIDDLEWARE = [
@@ -50,7 +54,7 @@ ROOT_URLCONF = 'feedback_sorting.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        "DIRS": [BASE_DIR / "templates"],  # Ensure templates directory is set
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -102,6 +106,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CRISPY_TEMPLATE_PACK = 'bootstrap5'  # Change to 'bootstrap4' if using Bootstrap 4
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -123,6 +129,9 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 
 STATIC_ROOT  = os.path.join(BASE_DIR, 'staticfiles')
 
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -131,3 +140,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
+LOGIN_URL = '/login/'  # Change this to your actual login page URL
+
+
+# Looking to send emails in production? Check out our Email API/SMTP product!
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = '167e12a37869cd'
+EMAIL_HOST_PASSWORD = '47185c483d06af'
+EMAIL_PORT = '2525'
+
+PASSWORD_RESET_TIMEOUT = 3600  # 1-hour expiry
+
+PASSWORD_RESET_CONFIRM_URL = "password-reset-confirm"

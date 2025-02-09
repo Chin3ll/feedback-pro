@@ -35,6 +35,12 @@
         .card {
             margin-bottom: 20px;
         }
+    .grade-A { color: green; font-weight: bold; }
+    .grade-B { color: blue; font-weight: bold; }
+    .grade-C { color: orange; font-weight: bold; }
+    .grade-D { color: red; font-weight: bold; }
+    .grade-F { color: darkred; font-weight: bold; }
+
     </style>
 </head>
 <body>
@@ -50,6 +56,17 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">Evaluation Report</a>
+                
+                <div class="dropdown ms-auto">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle"></i> Account
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </div>
+
             </div>
         </nav>
 
@@ -77,11 +94,23 @@
                         <pre>{{ evaluation.student_code }}</pre>
                         <hr>
                         <h6><strong>Feedback:</strong></h6>
-                        <p>{{ evaluation.feedback }}</p>
+                        <p> <strong class="badge text-bg-info"> Hello, {{ request.user.username }}! 👩‍💻 this is the report for your submission:</strong>  {{ evaluation.feedback }}</p>
                         <hr>
                         <h6><strong>Grade:</strong></h6>
                         <p> {% if evaluation.grade %}
-                              {{ evaluation.grade }}%
+                            {% if evaluation.grade == 100 %}
+                            <span class="grade-A">{{ evaluation.grade }}% A</span>
+                        {% elif evaluation.grade == 85 %}
+                            <span class="grade-B">{{ evaluation.grade }}% B</span>
+                        {% elif evaluation.grade == 75 %}
+                            <span class="grade-C"> {{ evaluation.grade }}% C</span>
+                        {% elif evaluation.grade == 60 %}
+                            <span class="grade-D">{{ evaluation.grade }}% D</span>
+                        {% elif evaluation.grade == 0 %}
+                            <span class="grade-F"> {{ evaluation.grade }}% F</span>
+                        {% else %}
+                            <span class="grade-NV">Grade: N/V</span>  <!-- Default case for missing grades -->
+                        {% endif %}
                             {% else %}
                                 None
                             {% endif %}

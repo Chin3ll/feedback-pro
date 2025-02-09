@@ -6,9 +6,55 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 User = get_user_model()
-
+from .forms import ChangeUsernamePasswordForm
 from sorting_feedback.models import Evaluation, EvaluationCriteria
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse_lazy
+from django.contrib.auth.decorators import user_passes_test
+
+def logout_required(view_func):
+    return user_passes_test(lambda user: not user.is_authenticated, login_url='home')(view_func)
+
+
+
+
+@login_required
+def change_credentials(request):
+    user = request.user
+
+    if request.method == "POST":
+        form = ChangeUsernamePasswordForm(request.POST, instance=user)
+        if form.is_valid():
+            new_username = form.cleaned_data.get("username")
+            new_password = form.cleaned_data.get("password")
+
+            # Update username across all models if changed
+            if new_username and new_username != user.username:
+                # Update all models where the username is stored
+                Evaluation.objects.filter(student__username=user.username).update(student__username=new_username)
+                # Add other models as needed
+
+                user.username = new_username
+
+            # Update password if provided
+            if new_password:
+                user.set_password(new_password)
+
+            user.save()
+            update_session_auth_hash(request, user)  # Keep user logged in after password change
+
+            messages.success(request, "Your credentials have been updated successfully.")
+            return redirect("profile")  # Redirect to the profile page
+
+    else:
+        form = ChangeUsernamePasswordForm(instance=user)
+
+    return render(request, "accounts/change_credentials.html", {"form": form})
+
+
 
 def submit_assignment(request):
     # Fetch the latest evaluation criteria
@@ -53,24 +99,24 @@ def dashboard_a(request):
 @login_required
 def dashboard_student_assignment_submission(request):
     # Dummy data for demonstration
-    stats = {
-        "total_students": 120,
-        "assignments_submitted": 75,
-        "pending_approvals": 18,
-    }
+    # stats = {
+    #     "total_students": 120,
+    #     "assignments_submitted": 75,
+    #     "pending_approvals": 18,
+    # }
     
-    recent_submissions = [
-        {"id": 1, "student_name": "John Doe", "assignment": "Sorting Algorithm", "submitted_on": "2025-01-01", "status": "Approved"},
-        {"id": 2, "student_name": "Jane Smith", "assignment": "Bubble Sort", "submitted_on": "2025-01-02", "status": "Pending"},
-        {"id": 3, "student_name": "Mike Brown", "assignment": "Merge Sort", "submitted_on": "2025-01-03", "status": "Rejected"},
-    ]
+    # recent_submissions = [
+    #     {"id": 1, "student_name": "John Doe", "assignment": "Sorting Algorithm", "submitted_on": "2025-01-01", "status": "Approved"},
+    #     {"id": 2, "student_name": "Jane Smith", "assignment": "Bubble Sort", "submitted_on": "2025-01-02", "status": "Pending"},
+    #     {"id": 3, "student_name": "Mike Brown", "assignment": "Merge Sort", "submitted_on": "2025-01-03", "status": "Rejected"},
+    # ]
     
-    context = {
-        "stats": stats,
-        "recent_submissions": recent_submissions,
-    }
+    # context = {
+    #     "stats": stats,
+    #     "recent_submissions": recent_submissions,
+    # }
     
-    return render(request, "dashboard-submit-assignment.html", context)    
+    return render(request, "dashboard-submit-assignment.html")    
 
 @login_required
 def dashboard_t(request):
@@ -93,17 +139,17 @@ def dashboard_t(request):
 @login_required
 def dashboard_s(request):
     # Dummy data for demonstration
-    stats = {
-        "total_students": 120,
-        "assignments_submitted": 75,
-        "pending_approvals": 18,
-    }
+    # stats = {
+    #     "total_students": 120,
+    #     "assignments_submitted": 75,
+    #     "pending_approvals": 18,
+    # }
     
-    recent_submissions = [
-        {"id": 1, "student_name": "John Doe", "assignment": "Sorting Algorithm", "submitted_on": "2025-01-01", "status": "Approved"},
-        {"id": 2, "student_name": "Jane Smith", "assignment": "Bubble Sort", "submitted_on": "2025-01-02", "status": "Pending"},
-        {"id": 3, "student_name": "Mike Brown", "assignment": "Merge Sort", "submitted_on": "2025-01-03", "status": "Rejected"},
-    ]
+    # recent_submissions = [
+    #     {"id": 1, "student_name": "John Doe", "assignment": "Sorting Algorithm", "submitted_on": "2025-01-01", "status": "Approved"},
+    #     {"id": 2, "student_name": "Jane Smith", "assignment": "Bubble Sort", "submitted_on": "2025-01-02", "status": "Pending"},
+    #     {"id": 3, "student_name": "Mike Brown", "assignment": "Merge Sort", "submitted_on": "2025-01-03", "status": "Rejected"},
+    # ]
     
     total_students = User.objects.filter(profile__role='student').count()
     
@@ -114,12 +160,13 @@ def dashboard_s(request):
 
     context = {
         "total_students": total_students,
-        "stats": stats,
-        "recent_submissions": recent_submissions,
+        # "stats": stats,
+        # "recent_submissions": recent_submissions,
     }
     
     return render(request, 'accounts/student_submitted_assignment.html', {'evaluations': evaluations})   
 
+@logout_required
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -176,3 +223,16 @@ def pending_evaluations_list(request):
 
     return render(request, 'pending_evaluations_list.html', {'evaluations': evaluations})
 
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = "resetPassword/password_reset.html"  # Ensure this template exists
+    email_template_name = "resetPassword/password_reset_email.html"  # Ensure this template exists
+    subject_template_name = "resetPassword/password_reset_subject.txt"  # Ensure this template exists
+    success_url = reverse_lazy("password_reset_done")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        request = self.request
+        context["protocol"] = "https" if request.is_secure() else "http"
+        context["domain"] = get_current_site(request).domain
+        return context

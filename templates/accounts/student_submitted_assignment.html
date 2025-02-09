@@ -35,6 +35,15 @@
         .card {
             margin-bottom: 20px;
         }
+
+  
+    .grade-A { color: green; font-weight: bold; }
+    .grade-B { color: blue; font-weight: bold; }
+    .grade-C { color: orange; font-weight: bold; }
+    .grade-D { color: red; font-weight: bold; }
+    .grade-F { color: darkred; font-weight: bold; }
+
+
     </style>
 </head>
 <body>
@@ -89,7 +98,21 @@
                                     <td>{{ forloop.counter }}</td>
                                     <td>{{ evaluation.title }}</td>
                                     <td>{{ evaluation.status }}</td>
-                                    <td>{{ evaluation.grade|default:"N/A" }}</td>
+                                    <td>
+                                        {% if evaluation.grade == 100 %}
+                                            <span class="grade-A">{{ evaluation.grade }} A</span>
+                                        {% elif evaluation.grade == 85 %}
+                                            <span class="grade-B">{{ evaluation.grade }} B</span>
+                                        {% elif evaluation.grade == 75 %}
+                                            <span class="grade-C"> {{ evaluation.grade }} C</span>
+                                        {% elif evaluation.grade == 60 %}
+                                            <span class="grade-D">{{ evaluation.grade }} D</span>
+                                        {% elif evaluation.grade == 0 %}
+                                            <span class="grade-F"> {{ evaluation.grade }} F</span>
+                                        {% else %}
+                                            <span class="grade-NV">Grade: N/V</span>  <!-- Default case for missing grades -->
+                                        {% endif %}
+                                    </td>
                                     <td>{{ evaluation.correctness|yesno:"Correct,Incorrect" }}</td>
                                     <td>{{ evaluation.created_at|date:"Y-m-d H:i:s" }}</td>
                                     <td>
