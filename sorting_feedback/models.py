@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.timezone import now
 
 class Submission(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -33,12 +34,27 @@ class Evaluation(models.Model):
 
 
 class EvaluationCriteria(models.Model):
+    title = models.CharField(max_length=255)
     check_syntax = models.BooleanField(default=True, help_text="Check for syntactic accuracy.")
     check_indentation = models.BooleanField(default=True, help_text="Check for correct indentation.")
     check_comments = models.BooleanField(default=True, help_text="Check for good comments.")
     min_comments = models.PositiveIntegerField(default=1, help_text="Minimum required comments in the code.")
     required_constructs = models.JSONField(default=list, help_text="List of required constructs (e.g., ['while loop', 'function']).")
+    submission_deadline = models.DateTimeField(null=True, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     last_updated = models.DateTimeField(auto_now=True)
+
 
     def __str__(self):
         return "Evaluation Criteria"
+
+
+class DeadlineExtensionLog(models.Model):
+    tutor = models.ForeignKey(User, on_delete=models.CASCADE)
+    criteria = models.ForeignKey(EvaluationCriteria, on_delete=models.CASCADE)
+    old_deadline = models.DateTimeField()
+    new_deadline = models.DateTimeField()
+    timestamp = models.DateTimeField(default=now)
+
+    def __str__(self):
+        return f"Extension for {self.evaluation_criteria}"  

@@ -114,44 +114,37 @@
                       </div>
                   
 
-                  <div class="alert alert-info">
-                    {% if criteria %}
-                            <p><strong>You've set the students submission to evaluated based on the following criteria:</strong></p>
-                            <ul>
-                                {% if criteria.check_syntax %} <li>✅ Syntax Check: Code must be syntactically correct.</li> {% endif %}
-                                {% if criteria.check_indentation %} <li>✅ Indentation Check: Code must follow proper indentation (4 spaces per level).</li> {% endif %}
-                                {% if criteria.check_comments %} <li>✅ Comment Check: Code must have at least <strong>{{ criteria.min_comments }}</strong> comments.</li> {% endif %}
+                            <div class="alert alert-info">
                                 
-                                {% if criteria.required_constructs %}
-                                    <li>✅ Required Constructs:
-                                        <ul>
-                                            {% for construct in criteria.required_constructs %}
-                                                <li>⚠️ Code must include a <strong>{{ construct }}</strong>.</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                            {% if criteria.submission_deadline %} 
-                            <p>Submission Deadline: <strong>{{ criteria.submission_deadline }}</strong></p>
+                                        
+                                    
+                             
+                        <div class="container mt-4">
+                            <h2>Change Submission Deadline</h2>
 
-                            {% if user == criteria.created_by %}
-                                <a href="{% url 'extend_deadline' criteria.id %}" class="btn btn-warning">
-                                    Extend Deadline
-                                </a>
+                            <p>Current deadline: <strong>{{ criteria.submission_deadline }}</strong></p>
+
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="badge text-bg-light">{{ message }}</div>
+                                {% endfor %}
                             {% endif %}
 
+                            <form method="POST" class="form">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label class="form-label">New Submission Deadline</label>
+                                    {{ form.submission_deadline }}
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Deadline</button>
+                            </form>
 
-                            {% else %}
-                            <p>Submission Deadline: <strong>None</strong></p>
-                            {% endif %}
-                         
-                        {% else %}
-                            <p class="text-danger">⚠️ No evaluation criteria set by the tutor.</p>
-                        {% endif %}
-                       
-                    
-                </div>
+                            <a href="{% url 'dashboard_t' %}" class="btn btn-secondary mt-3">Back</a>
+                        </div>
+                      
+
+                                
+                             </div>
               
               </div>
 

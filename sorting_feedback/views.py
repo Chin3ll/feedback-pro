@@ -6,7 +6,7 @@ from .models import Submission, Evaluation
 from django.shortcuts import render
 import logging
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import EvaluationCriteria, Evaluation
 import ast
 import subprocess
@@ -17,6 +17,14 @@ from django.db.models import Q
 import os
 import chardet  # For detecting file encoding
 from .utils import *
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.timezone import now
+from django.contrib import messages
+from .models import DeadlineExtensionLog  
+from django.core.mail import send_mail
+from django.utils.timezone import localtime
+
+from .forms import SubmissionDeadlineForm
 
 logger = logging.getLogger(__name__)
 
@@ -138,6 +146,13 @@ def submit_code(request):
                 "success": False,
                 "error": "No evaluation criteria set by the tutor."
             })
+        
+        # Check submission deadline
+        if criteria.submission_deadline and now() > criteria.submission_deadline:
+            return render(request, "feedback_result.html", {
+                "success": False,
+                "error": "The submission deadline has passed. You can no longer submit."
+            })
 
         required_constructs = criteria.required_constructs  # Fetch required constructs dynamically
         title = ", ".join(required_constructs)  # Use required constructs as title
@@ -228,3 +243,85 @@ def student_submitted_assignment(request):
     evaluations = Evaluation.objects.filter(student=current_user)
 
     return render(request, 'accounts/student_submitted_assignment.html', {'evaluations': evaluations})
+
+
+
+@login_required
+def extend_deadline(request, criteria_id):
+
+
+
+    total_students = User.objects.filter(profile__role='student').count()
+    evaluations = Evaluation.objects.all().count()
+    pending_evaluations = Evaluation.objects.filter(status='pending').count()
+
+    criteria = get_object_or_404(EvaluationCriteria, id=criteria_id)
+
+    # evaluation = get_object_or_404(EvaluationCriteria, id=evaluation_id)
+
+     # Your logic to extend the deadline
+    # evaluation.deadline += timedelta(days=7)  # Example: Extend by 7 days
+    # evaluation.save()
+
+    # Ensure only the tutor who created the criteria can update it
+    if request.user != criteria.created_by:
+        messages.error(request, "You are not authorized to extend this deadline.")
+        return redirect("dashboard_t")  # Change to the appropriate redirect
+
+    if request.method == "POST":
+        form = SubmissionDeadlineForm(request.POST, instance=criteria)
+        if form.is_valid():
+            old_deadline = criteria.submission_deadline  # Store old deadline
+            form.save()
+            new_deadline = criteria.submission_deadline  # Get new deadline
+
+          
+            # Log the deadline change
+            DeadlineExtensionLog.objects.create(
+                tutor=request.user,
+                criteria=criteria,
+                old_deadline=old_deadline,
+                new_deadline=new_deadline
+            )
+
+            # Send notification email (as implemented earlier)
+            students = User.objects.filter(groups__name="Students")
+            # print(stu)
+            student_emails = [student.email for student in students if student.email]
+
+            
+
+            if student_emails:
+                formatted_deadline = new_deadline.strftime("%B %d, %Y %I:%M %p")
+                send_mail(
+                    subject="Submission Deadline Changed",
+                    message=f"Dear Student,\n\nThe deadline for '{criteria.title}' has been extended to {formatted_deadline}. "
+                            f"Please ensure your submission is completed before this deadline.\n\n"
+                            f"Best regards,\nFeedback Generator Team",
+                    from_email='ochinell@outlook.com',
+                    recipient_list=student_emails,
+                    fail_silently=True,
+                )
+            # print("DEFAULT_FROM_EMAIL", DEFAULT_FROM_EMAIL)
+            # print("formatted_deadline", formatted_deadline)
+
+            messages.success(request, "Submission deadline updated and students notified.")
+            return redirect("extend_deadline", criteria_id=criteria.id)
+
+    else:
+        form = SubmissionDeadlineForm(instance=criteria)
+    
+    context = {
+        "total_students": total_students,
+        "assignments_submitted": evaluations,
+        "pending_evaluations": pending_evaluations,
+        "criteria" : criteria,
+        "form" : form
+    }
+
+    return render(request, "accounts/extend_deadline.html", context)
+
+    
+
+
+    return render(request, "accounts/extend_deadline.html", context)

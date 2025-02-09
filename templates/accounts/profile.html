@@ -246,6 +246,12 @@
               </div>
             </div>
 
+            {% if messages %}
+            {% for message in messages %}
+                <div class="badge text-bg-success">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+
             <p>"Welcome to your profile! Here, you can easily manage your information, update details, and access personalized 
               features tailored to your role. Keep your profile up-to-date and unlock a seamless experience
                designed just for you."</p>

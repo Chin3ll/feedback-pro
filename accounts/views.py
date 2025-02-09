@@ -125,11 +125,17 @@ def dashboard_t(request):
     total_students = User.objects.filter(profile__role='student').count()
     evaluations = Evaluation.objects.all().count()
     pending_evaluations = Evaluation.objects.filter(status='pending').count()
+
+    # Fetch the latest evaluation criteria
+    criteria = EvaluationCriteria.objects.order_by('-last_updated').first()
+
+   
     
     context = {
         "total_students": total_students,
         "assignments_submitted": evaluations,
-        "pending_evaluations": pending_evaluations
+        "pending_evaluations": pending_evaluations,
+        "criteria" : criteria
     }
     
     
