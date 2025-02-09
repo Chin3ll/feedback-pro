@@ -86,7 +86,7 @@ The project will be available at `http://127.0.0.1:8000/`.
 ### Starting the project
 ## step 1
 - Navigate to `http://127.0.0.1:8000/login/`
-- to login ![alt text](image-1.png)
+- to login ![alt text](zreadmeimages/image-1.png)
 
 ## step 2
 - Navigate to `http://127.0.0.1:8000/login/`
