@@ -16,7 +16,7 @@ SECRET_KEY = 'django-insecure-08x%jr)=yx_0ac@9(7n9elld+l_oikck2hvt9db=+pl#_ody95
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 from decouple import config
 from django.contrib.sites.shortcuts import get_current_site

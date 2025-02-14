@@ -117,18 +117,22 @@ def detect_constructs(code):
 
 
 def assign_grade(correctness, plagiarism_score):
+    """
+    Assigns a preliminary grade based on correctness and plagiarism score.
+    Max system grading is 80, final grading beyond that is left to the tutor.
+    """
     if plagiarism_score > 50:
-        grade = 0  # Plagiarized submissions should get 0
+        grade = 0  # Plagiarized submissions get 0
     elif correctness >= 90:
-        grade = 100
+        grade = 80  # System assigns max 80; tutor decides final score
     elif correctness >= 80:
-        grade = 85
-    elif correctness >= 70:
         grade = 75
+    elif correctness >= 70:
+        grade = 65
     elif correctness >= 50:
-        grade = 60
+        grade = 50
     else:
         grade = 40  # Failed submission
 
-    print(f"Assigned Grade: {grade}")  # Debugging print
-    return grade
+    print(f"System-Assigned Grade: {grade}")  # Debugging print
+    return grade  # Tutor will review and adjust if necessary

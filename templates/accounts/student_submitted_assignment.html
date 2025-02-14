@@ -100,19 +100,24 @@
                                     <td>{{ evaluation.status }}</td>
                                     <td>
                                         {% if evaluation.grade == 100 %}
-                                            <span class="grade-A">{{ evaluation.grade }} A</span>
-                                        {% elif evaluation.grade == 85 %}
-                                            <span class="grade-B">{{ evaluation.grade }} B</span>
+                                            <span class="grade-A">{{ evaluation.grade }} A (Finalized by Tutor)</span>
+                                        {% elif evaluation.grade == 80 %}
+                                            <span class="grade-A">{{ evaluation.grade }} A (System Max - Pending Tutor Review)</span>
                                         {% elif evaluation.grade == 75 %}
-                                            <span class="grade-C"> {{ evaluation.grade }} C</span>
-                                        {% elif evaluation.grade == 60 %}
+                                            <span class="grade-B">{{ evaluation.grade }} B</span>
+                                        {% elif evaluation.grade == 65 %}
+                                            <span class="grade-C">{{ evaluation.grade }} C</span>
+                                        {% elif evaluation.grade == 50 %}
                                             <span class="grade-D">{{ evaluation.grade }} D</span>
+                                        {% elif evaluation.grade == 40 %}
+                                            <span class="grade-F">{{ evaluation.grade }} F</span>
                                         {% elif evaluation.grade == 0 %}
-                                            <span class="grade-F"> {{ evaluation.grade }} F</span>
+                                            <span class="grade-F">{{ evaluation.grade }} F (Plagiarized)</span>
                                         {% else %}
                                             <span class="grade-NV">Grade: N/V</span>  <!-- Default case for missing grades -->
                                         {% endif %}
                                     </td>
+                                    
                                     <td>{{ evaluation.correctness|yesno:"Correct,Incorrect" }}</td>
                                     <td>{{ evaluation.created_at|date:"Y-m-d H:i:s" }}</td>
                                     <td>

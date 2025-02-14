@@ -14,6 +14,8 @@ from django.contrib.auth.views import PasswordResetView
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import user_passes_test
+from .utils import execute_code_safely  # Import the execution function
+
 
 def logout_required(view_func):
     return user_passes_test(lambda user: not user.is_authenticated, login_url='home')(view_func)
@@ -217,7 +219,12 @@ def evaluation_report(request, evaluation_id):
     # Fetch evaluation object by ID for the logged-in student
     evaluation = get_object_or_404(Evaluation, id=evaluation_id, student=request.user)
 
+    # Run the submitted code and get output
+    execution_result = execute_code_safely(evaluation.student_code)
+
+
     return render(request, 'student-assignment-report.html', {
+        'execution_result': execution_result,  # Include execution output in context
         'evaluation': evaluation
     })
 

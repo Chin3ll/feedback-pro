@@ -1,6 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.utils.timezone import now
+from django.contrib.auth.models import User, Group
+
 
 class Submission(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -44,10 +46,14 @@ class EvaluationCriteria(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     last_updated = models.DateTimeField(auto_now=True)
 
+    # def save(self, *args, **kwargs):
+    #     if self.created_by.role != "tutor":  # Prevent students/admins from setting criteria
+    #         raise PermissionDenied("Only tutors can create evaluation criteria.")
+    #     super().save(*args, **kwargs)
+  
 
     def __str__(self):
         return "Evaluation Criteria"
-
 
 class DeadlineExtensionLog(models.Model):
     tutor = models.ForeignKey(User, on_delete=models.CASCADE)
