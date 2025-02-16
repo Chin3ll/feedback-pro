@@ -1,0 +1,12 @@
+{% if success %}
+    <h2>Submission Successful</h2>
+    <p>{{ feedback }}</p>
+    <p>Plagiarism Score: {{ plagiarism_score }}%</p>
+    {% if is_plagiarized %}
+        <p style="color: red;">Warning: Possible Plagiarism Detected!</p>
+    {% endif %}
+    <p>Grade Assigned: {{ evaluation.grade }}</p>
+{% else %}
+    <h2>Submission Failed</h2>
+    <p style="color: red;">{{ error }}</p>
+{% endif %}

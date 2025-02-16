@@ -1,5 +1,8 @@
 import ast
 
+from collections import Counter
+from .models import *
+
 class ConstructDetector(ast.NodeVisitor):
     """
     Dynamically detects constructs in Python code using AST.
@@ -136,3 +139,49 @@ def assign_grade(correctness, plagiarism_score):
 
     print(f"System-Assigned Grade: {grade}")  # Debugging print
     return grade  # Tutor will review and adjust if necessary
+
+
+
+def analyze_student_performance(student):
+    """
+    Analyzes a student's strengths and weaknesses based on their evaluation history.
+    """
+    evaluations = Evaluation.objects.filter(student=student)
+    total_submissions = evaluations.count()
+
+    if total_submissions == 0:
+        return  # No need to analyze if there are no submissions
+
+    # Count occurrences of constructs and errors
+    construct_counts = Counter()
+    error_counts = Counter()
+    total_correct_submissions = 0
+
+    for eval in evaluations:
+        if eval.correctness:
+            total_correct_submissions += 1
+
+        # Extract constructs from feedback (assuming constructs are mentioned)
+        feedback_lines = eval.feedback.split("\n")
+        for line in feedback_lines:
+            if "Error:" in line:
+                error_counts[line] += 1
+            elif "construct" in line.lower():
+                construct_counts[line] += 1
+
+    # Determine strengths (most frequently correct constructs)
+    strengths = [construct for construct, count in construct_counts.most_common(3)]
+    
+    # Determine weaknesses (most frequent errors)
+    weaknesses = [error for error, count in error_counts.most_common(3)]
+
+    # Calculate accuracy percentage
+    accuracy = (total_correct_submissions / total_submissions) * 100 if total_submissions else 0
+
+    # Save or update the student's performance record
+    performance, created = StudentPerformance.objects.get_or_create(student=student)
+    performance.total_submissions = total_submissions
+    performance.accuracy = accuracy
+    performance.strengths = ", ".join(strengths)
+    performance.weaknesses = ", ".join(weaknesses)
+    performance.save()

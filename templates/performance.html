@@ -1,0 +1,14 @@
+<h3>Performance Report</h3>
+<h4>Strengths:</h4>
+<ul>
+    {% for key, value in performance.strength_areas.items %}
+        <li>{{ key }}: {{ value }} times</li>
+    {% endfor %}
+</ul>
+
+<h4>Weaknesses:</h4>
+<ul>
+    {% for key, value in performance.weakness_areas.items %}
+        <li>{{ key }}: {{ value }} times</li>
+    {% endfor %}
+</ul>

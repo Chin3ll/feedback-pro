@@ -2,6 +2,9 @@ from django.db import models
 # from django.contrib.auth.models import User
 from django.utils.timezone import now
 from django.contrib.auth.models import User, Group
+import re
+import json  # Import JSON for parsing feedback if needed
+
 
 
 class Submission(models.Model):
@@ -64,3 +67,55 @@ class DeadlineExtensionLog(models.Model):
 
     def __str__(self):
         return f"Extension for {self.evaluation_criteria}"  
+
+class StudentPerformance(models.Model):
+    student = models.OneToOneField(User, on_delete=models.CASCADE)
+    total_submissions = models.IntegerField(default=0)
+    accuracy = models.FloatField(default=0.0)
+    strength_areas = models.JSONField(default=dict)  # Use JSON for flexibility
+    weakness_areas = models.JSONField(default=dict)
+    last_updated = models.DateTimeField(auto_now=True)
+
+   
+
+    def update_performance(self, evaluation):
+        print("DEBUG: Updating performance for student ->", self.student.username)
+
+        feedback = evaluation.feedback  # Should already contain evaluation text
+        print("DEBUG: Received feedback ->", feedback)
+
+        if not feedback:
+            print("ERROR: Feedback is empty! Skipping update.")
+            return
+
+        # Extract strengths and weaknesses if available
+        strength_start = feedback.find("Strengths:")
+        weakness_start = feedback.find("Weaknesses:")
+
+        strengths = feedback[strength_start + 10:weakness_start].strip() if strength_start != -1 else ""
+        weaknesses = feedback[weakness_start + 11:].strip() if weakness_start != -1 else ""
+
+        # Generate human-readable feedback
+        if strengths:
+            strength_message = f"Great job! {strengths} Keep up the good work!"
+        else:
+            strength_message = "You're making progress! Try to apply best practices consistently."
+
+        if weaknesses:
+            weakness_message = f"Here's where you can improve: {weaknesses}. Focus on these areas next time!"
+        else:
+            weakness_message = "No major weaknesses detected, but always strive to refine your skills!"
+
+        print(f"DEBUG: Generated Strength Message -> {strength_message}")
+        print(f"DEBUG: Generated Weakness Message -> {weakness_message}")
+
+        # Save extracted text as JSON-like dictionaries
+        self.strength_areas = {"description": strength_message}
+        self.weakness_areas = {"description": weakness_message}
+
+        # Update total submissions
+        self.total_submissions += 1
+
+        # Save changes
+        self.save(update_fields=["strength_areas", "weakness_areas", "total_submissions"])
+        print("✅ Student performance updated with friendly feedback!")

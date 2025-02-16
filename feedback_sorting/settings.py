@@ -146,8 +146,8 @@ LOGIN_URL = '/login/'  # Change this to your actual login page URL
 # Looking to send emails in production? Check out our Email API/SMTP product!
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_HOST_USER = 'd21b3efded16ab'
-EMAIL_HOST_PASSWORD = 'bd62864bd40fb8'
+EMAIL_HOST_USER = '01473bd2497050'
+EMAIL_HOST_PASSWORD = '6f01ad8730caca'
 EMAIL_PORT = '2525'
 DEFAULT_FROM_EMAIL = EMAIL_HOST
 EMAIL_USE_TLS = True

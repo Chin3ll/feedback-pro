@@ -1,5 +1,6 @@
 
 from .evaluation import evaluate_code
+import json
 
 from django.contrib.auth.decorators import login_required
 from .models import Submission, Evaluation
@@ -56,6 +57,7 @@ def check_plagiarism(new_code, student):
 
     return max_similarity  # Return highest similarity score
 
+
 def evaluate_code_with_criteria(code, criteria):
     feedback = []
     correctness = True
@@ -67,7 +69,9 @@ def evaluate_code_with_criteria(code, criteria):
         return {
             "feedback": "\n".join(feedback),
             "correctness": False,
-            "time_complexity": "Not Applicable"
+            "time_complexity": "Not Applicable",
+            "strengths": {},  # Ensure strengths is always a dictionary
+            "weaknesses": {}  # Ensure weaknesses is always a dictionary
         }
 
     # Syntax Check
@@ -86,22 +90,26 @@ def evaluate_code_with_criteria(code, criteria):
             stripped = line.lstrip()
             if not stripped or stripped.startswith("#"):
                 continue  # Skip blank lines and comments
-            
+
             leading_spaces = len(line) - len(stripped)
             if leading_spaces % 4 != 0:
                 feedback.append(f"Line {line_no}: Indentation should be a multiple of 4 spaces.")
                 correctness = False
 
     # Comment Check
+    strengths = {}
+    weaknesses = {}
+
     if criteria.check_comments:
         comment_count = sum(1 for line in code.split("\n") if line.strip().startswith("#"))
         if comment_count < criteria.min_comments:
             feedback.append(f"Insufficient comments. Found {comment_count}, but at least {criteria.min_comments} required.")
-            correctness = False
+            weaknesses["Comments"] = f"Try adding more comments. You have {comment_count}, but {criteria.min_comments} is required."
         else:
             feedback.append(f"Comments are sufficient: {comment_count} comment(s).")
+            strengths["Comments"] = "Good use of comments! Keep explaining your code."
 
-    # **Construct Validation**
+    # Construct Validation
     detected_constructs = detect_constructs(code)
     missing_constructs = []
 
@@ -110,16 +118,24 @@ def evaluate_code_with_criteria(code, criteria):
             missing_constructs.append(required_construct)
 
     if missing_constructs:
-        feedback.append(f"Error: However it required that the code should contain the following construct(s): {', '.join(missing_constructs)}.")
-        correctness = False
+        feedback.append(f"Missing required constructs: {', '.join(missing_constructs)}.")
+        for construct in missing_constructs:
+            weaknesses[construct] = f"You need to include {construct} in your code."
     else:
         feedback.append("All required constructs are present.")
+        strengths["Constructs"] = "Great job! All required constructs are used correctly."
 
     return {
         "feedback": "\n".join(feedback),
         "correctness": correctness,
-        "time_complexity": "Not Applicable"
+        "time_complexity": "Not Applicable",
+        "strengths": strengths,
+        "weaknesses": weaknesses
     }
+
+
+
+
 
 @login_required
 def submit_code(request):
@@ -137,6 +153,10 @@ def submit_code(request):
         raw_data = submission_file.read()
         encoding = chardet.detect(raw_data)["encoding"]
         file_content = raw_data.decode(encoding or "utf-8").strip()
+
+        # Ensure the student has a submission
+        # submission, created = Submission.objects.get_or_create(student=student, defaults={"code": file_content})
+
 
         # Get evaluation criteria
         criteria = EvaluationCriteria.objects.first()
@@ -164,16 +184,25 @@ def submit_code(request):
                 "success": False,
                 "error": "You have already submitted for these required constructs."
             })
+
         # Check plagiarism: Flag if another student has submitted the same code
         similar_submission = Evaluation.objects.filter(~Q(student=student), student_code=file_content).exists()
         plagiarism_score = 100.0 if similar_submission else check_plagiarism(file_content, student)
         is_plagiarized = plagiarism_score > 50  # Mark as plagiarized if similarity > 50%
 
         # Evaluate the code
-        feedback = evaluate_code_with_criteria(file_content, criteria)
+        raw_feedback = evaluate_code_with_criteria(file_content, criteria)
+        print("DEBUG: Raw Feedback from Evaluation ->", raw_feedback)
+
+        # Ensure feedback is a dictionary
+        try:
+            feedback = json.loads(raw_feedback) if isinstance(raw_feedback, str) else raw_feedback
+        except json.JSONDecodeError:
+            print("ERROR: Could not parse feedback as JSON. Defaulting to plain text.")
+            feedback = {"feedback": raw_feedback, "strengths": {}, "weaknesses": {}}
 
         # Automatically assign grading based on evaluation
-        grade = assign_grade(feedback["correctness"] * 100, plagiarism_score)
+        grade = assign_grade(feedback.get("correctness", 0) * 100, plagiarism_score)
 
         # Save evaluation to the database
         evaluation = Evaluation.objects.create(
@@ -182,16 +211,18 @@ def submit_code(request):
             student_code=file_content,
             submission_file=submission_file,
             feedback=feedback["feedback"],
-            correctness=feedback["correctness"],
-            time_complexity=feedback["time_complexity"],
+            correctness=feedback.get("correctness", 0),
+            time_complexity=feedback.get("time_complexity", 0),
             plagiarism_score=plagiarism_score,
             is_plagiarized=is_plagiarized,
             grade=grade,
             status='submitted'
         )
 
+        # Update Student Performance
+        student_performance, created = StudentPerformance.objects.get_or_create(student=student)
+        student_performance.update_performance(evaluation)
         
-
         return render(request, "feedback_result.html", {
             "success": True,
             "feedback": feedback["feedback"],
@@ -201,6 +232,7 @@ def submit_code(request):
         })
 
     return redirect('submit_assignment')
+
 
 @login_required
 def dashboard(request):
@@ -332,3 +364,6 @@ def custom_404_view(request, exception):
 
 def custom_500_view(request):
     return render(request, 'errors/500.html', status=500)
+
+
+    
