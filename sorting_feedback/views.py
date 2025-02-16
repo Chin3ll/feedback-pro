@@ -70,18 +70,24 @@ def evaluate_code_with_criteria(code, criteria):
             "feedback": "\n".join(feedback),
             "correctness": False,
             "time_complexity": "Not Applicable",
-            "strengths": {},  # Ensure strengths is always a dictionary
-            "weaknesses": {}  # Ensure weaknesses is always a dictionary
+            "strengths": {},
+            "weaknesses": {},
+            "detected_constructs": [],  # Fix: Return detected_constructs
+            "missing_constructs": [],   # Fix: Return missing_constructs
         }
+
+    strengths = {}
+    weaknesses = {}
 
     # Syntax Check
     if criteria.check_syntax:
         try:
             compile(code, "<string>", "exec")
-            feedback.append("Code has valid syntax.")
+            feedback.append("✅ Syntax is correct!")
+            strengths["Syntax"] = "Great job! Your syntax is correct and well-structured. Keep up the good work! 🎯"
         except Exception as exec_error:
-            feedback.append(f"Code compilation error: {exec_error}")
-            correctness = False
+            feedback.append(f"⚠️ Syntax error: {exec_error}")
+            weaknesses["Syntax"] = "Your code contains syntax errors. Please check and fix them."
 
     # Indentation Check
     if criteria.check_indentation:
@@ -90,27 +96,24 @@ def evaluate_code_with_criteria(code, criteria):
             stripped = line.lstrip()
             if not stripped or stripped.startswith("#"):
                 continue  # Skip blank lines and comments
-
+            
             leading_spaces = len(line) - len(stripped)
             if leading_spaces % 4 != 0:
-                feedback.append(f"Line {line_no}: Indentation should be a multiple of 4 spaces.")
-                correctness = False
+                feedback.append(f"⚠️ Line {line_no}: Indentation should be a multiple of 4 spaces.")
+                weaknesses["Indentation"] = "Your code has incorrect indentation. Ensure you use multiples of 4 spaces."
 
     # Comment Check
-    strengths = {}
-    weaknesses = {}
-
     if criteria.check_comments:
         comment_count = sum(1 for line in code.split("\n") if line.strip().startswith("#"))
         if comment_count < criteria.min_comments:
-            feedback.append(f"Insufficient comments. Found {comment_count}, but at least {criteria.min_comments} required.")
-            weaknesses["Comments"] = f"Try adding more comments. You have {comment_count}, but {criteria.min_comments} is required."
+            feedback.append(f"⚠️ Insufficient comments. Found {comment_count}, but at least {criteria.min_comments} required.")
+            weaknesses["Comments"] = "Your code lacks sufficient comments. Aim for more explanations."
         else:
-            feedback.append(f"Comments are sufficient: {comment_count} comment(s).")
-            strengths["Comments"] = "Good use of comments! Keep explaining your code."
+            feedback.append(f"✅ Comments are sufficient: {comment_count} comment(s).")
+            strengths["Comments"] = "Great job! Your code is well-commented, making it easier to understand. 💡"
 
     # Construct Validation
-    detected_constructs = detect_constructs(code)
+    detected_constructs = detect_constructs(code)  # Detect constructs
     missing_constructs = []
 
     for required_construct in criteria.required_constructs:
@@ -118,22 +121,22 @@ def evaluate_code_with_criteria(code, criteria):
             missing_constructs.append(required_construct)
 
     if missing_constructs:
-        feedback.append(f"Missing required constructs: {', '.join(missing_constructs)}.")
+        feedback.append(f"⚠️ Required constructs missing: {', '.join(missing_constructs)}.")
         for construct in missing_constructs:
-            weaknesses[construct] = f"You need to include {construct} in your code."
+            weaknesses[construct] = f"The required construct '{construct}' is missing. Please include it."
     else:
-        feedback.append("All required constructs are present.")
-        strengths["Constructs"] = "Great job! All required constructs are used correctly."
+        feedback.append("✅ All required constructs are present.")
+        strengths["Constructs"] = "Well done! You've included all necessary constructs. 🏆"
 
     return {
         "feedback": "\n".join(feedback),
         "correctness": correctness,
         "time_complexity": "Not Applicable",
         "strengths": strengths,
-        "weaknesses": weaknesses
+        "weaknesses": weaknesses,
+        "detected_constructs": detected_constructs,  # Fix: Return detected_constructs
+        "missing_constructs": missing_constructs,  # Fix: Return missing_constructs
     }
-
-
 
 
 
@@ -153,10 +156,6 @@ def submit_code(request):
         raw_data = submission_file.read()
         encoding = chardet.detect(raw_data)["encoding"]
         file_content = raw_data.decode(encoding or "utf-8").strip()
-
-        # Ensure the student has a submission
-        # submission, created = Submission.objects.get_or_create(student=student, defaults={"code": file_content})
-
 
         # Get evaluation criteria
         criteria = EvaluationCriteria.objects.first()
@@ -200,9 +199,11 @@ def submit_code(request):
         except json.JSONDecodeError:
             print("ERROR: Could not parse feedback as JSON. Defaulting to plain text.")
             feedback = {"feedback": raw_feedback, "strengths": {}, "weaknesses": {}}
-
+        
+ 
+        missing_constructs = feedback.get("missing_constructs", [])
         # Automatically assign grading based on evaluation
-        grade = assign_grade(feedback.get("correctness", 0) * 100, plagiarism_score)
+        grade = assign_grade(feedback.get("correctness", 0) * 100, plagiarism_score, missing_constructs)
 
         # Save evaluation to the database
         evaluation = Evaluation.objects.create(

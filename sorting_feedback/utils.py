@@ -119,15 +119,16 @@ def detect_constructs(code):
         return set()  # If there's a syntax error, return an empty set
 
 
-def assign_grade(correctness, plagiarism_score):
+def assign_grade(correctness, plagiarism_score, missing_constructs):
     """
-    Assigns a preliminary grade based on correctness and plagiarism score.
-    Max system grading is 80, final grading beyond that is left to the tutor.
+    Assigns a grade based on correctness, plagiarism score, and missing constructs.
     """
     if plagiarism_score > 50:
-        grade = 0  # Plagiarized submissions get 0
-    elif correctness >= 90:
-        grade = 80  # System assigns max 80; tutor decides final score
+        return 0  # Plagiarized submissions get 0
+
+    # Base grading on correctness
+    if correctness >= 90:
+        grade = 80  
     elif correctness >= 80:
         grade = 75
     elif correctness >= 70:
@@ -137,8 +138,12 @@ def assign_grade(correctness, plagiarism_score):
     else:
         grade = 40  # Failed submission
 
-    print(f"System-Assigned Grade: {grade}")  # Debugging print
-    return grade  # Tutor will review and adjust if necessary
+    # Severe penalty for missing constructs
+    penalty = len(missing_constructs) * 60  # Deduct 10 points per missing construct
+    grade = max(0, grade - penalty)  # Ensure grade never goes below 0
+
+    print(f"System-Assigned Grade after penalties: {grade}")  # Debugging print
+    return grade
 
 
 

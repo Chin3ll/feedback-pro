@@ -46,8 +46,11 @@ class EvaluationCriteria(models.Model):
     min_comments = models.PositiveIntegerField(default=1, help_text="Minimum required comments in the code.")
     required_constructs = models.JSONField(default=list, help_text="List of required constructs (e.g., ['while loop', 'function']).")
     submission_deadline = models.DateTimeField(null=True, blank=True)
+    
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     last_updated = models.DateTimeField(auto_now=True)
+
+    
 
     # def save(self, *args, **kwargs):
     #     if self.created_by.role != "tutor":  # Prevent students/admins from setting criteria
