@@ -15,6 +15,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import user_passes_test
 from .utils import execute_code_safely  # Import the execution function
+from sorting_feedback.models import StudentPerformance, Evaluation
+
 
 
 def logout_required(view_func):
@@ -219,13 +221,19 @@ def evaluation_report(request, evaluation_id):
     # Fetch evaluation object by ID for the logged-in student
     evaluation = get_object_or_404(Evaluation, id=evaluation_id, student=request.user)
 
+    # Get student performance for this evaluation
+    # student_performance = StudentPerformance.objects.filter(evaluation=evaluation).first()
+
     # Run the submitted code and get output
     execution_result = execute_code_safely(evaluation.student_code)
 
 
     return render(request, 'student-assignment-report.html', {
         'execution_result': execution_result,  # Include execution output in context
-        'evaluation': evaluation
+        'evaluation': evaluation,
+        "strengths": student_performance.strengths if student_performance else {},
+        "weaknesses": student_performance.weaknesses if student_performance else {},
+        "overall_performance": student_performance.overall_performance if student_performance else "No data available",
     })
 
 

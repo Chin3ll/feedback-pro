@@ -73,6 +73,7 @@ class DeadlineExtensionLog(models.Model):
 
 class StudentPerformance(models.Model):
     student = models.OneToOneField(User, on_delete=models.CASCADE)
+    # evaluation = models.ForeignKey("Evaluation", on_delete=models.CASCADE)
     total_submissions = models.IntegerField(default=0)
     accuracy = models.FloatField(default=0.0)
     strength_areas = models.JSONField(default=dict)  # Use JSON for flexibility

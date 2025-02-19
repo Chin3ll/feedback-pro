@@ -58,9 +58,10 @@ def check_plagiarism(new_code, student):
     return max_similarity  # Return highest similarity score
 
 
+
 def evaluate_code_with_criteria(code, criteria):
     feedback = []
-    correctness = True
+    correctness = True  # Default to True, adjust based on conditions
 
     try:
         tree = ast.parse(code)
@@ -72,14 +73,14 @@ def evaluate_code_with_criteria(code, criteria):
             "time_complexity": "Not Applicable",
             "strengths": {},
             "weaknesses": {},
-            "detected_constructs": [],  # Fix: Return detected_constructs
-            "missing_constructs": [],   # Fix: Return missing_constructs
+            "detected_constructs": [],  
+            "missing_constructs": [],   
         }
 
     strengths = {}
     weaknesses = {}
 
-    # Syntax Check
+    # ✅ Syntax Check
     if criteria.check_syntax:
         try:
             compile(code, "<string>", "exec")
@@ -88,8 +89,9 @@ def evaluate_code_with_criteria(code, criteria):
         except Exception as exec_error:
             feedback.append(f"⚠️ Syntax error: {exec_error}")
             weaknesses["Syntax"] = "Your code contains syntax errors. Please check and fix them."
+            correctness = False  # If syntax is incorrect, mark correctness as False
 
-    # Indentation Check
+    # ✅ Indentation Check
     if criteria.check_indentation:
         lines = code.split("\n")
         for line_no, line in enumerate(lines, start=1):
@@ -101,8 +103,9 @@ def evaluate_code_with_criteria(code, criteria):
             if leading_spaces % 4 != 0:
                 feedback.append(f"⚠️ Line {line_no}: Indentation should be a multiple of 4 spaces.")
                 weaknesses["Indentation"] = "Your code has incorrect indentation. Ensure you use multiples of 4 spaces."
+                correctness = False  # Incorrect indentation affects correctness
 
-    # Comment Check
+    # ✅ Comment Check
     if criteria.check_comments:
         comment_count = sum(1 for line in code.split("\n") if line.strip().startswith("#"))
         if comment_count < criteria.min_comments:
@@ -112,7 +115,7 @@ def evaluate_code_with_criteria(code, criteria):
             feedback.append(f"✅ Comments are sufficient: {comment_count} comment(s).")
             strengths["Comments"] = "Great job! Your code is well-commented, making it easier to understand. 💡"
 
-    # Construct Validation
+    # ✅ Construct Validation
     detected_constructs = detect_constructs(code)  # Detect constructs
     missing_constructs = []
 
@@ -124,20 +127,20 @@ def evaluate_code_with_criteria(code, criteria):
         feedback.append(f"⚠️ Required constructs missing: {', '.join(missing_constructs)}.")
         for construct in missing_constructs:
             weaknesses[construct] = f"The required construct '{construct}' is missing. Please include it."
+        correctness = False  # Missing constructs make correctness False
     else:
         feedback.append("✅ All required constructs are present.")
         strengths["Constructs"] = "Well done! You've included all necessary constructs. 🏆"
 
     return {
         "feedback": "\n".join(feedback),
-        "correctness": correctness,
+        "correctness": correctness,  # Correctness now considers missing constructs
         "time_complexity": "Not Applicable",
         "strengths": strengths,
         "weaknesses": weaknesses,
-        "detected_constructs": detected_constructs,  # Fix: Return detected_constructs
-        "missing_constructs": missing_constructs,  # Fix: Return missing_constructs
+        "detected_constructs": detected_constructs,  
+        "missing_constructs": missing_constructs,  
     }
-
 
 
 @login_required

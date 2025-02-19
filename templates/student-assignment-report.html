@@ -108,23 +108,23 @@
                         <h6><strong>Grade:</strong></h6>
                         <p> 
                             {% if evaluation.grade %}
-                                {% if evaluation.grade == 100 %}
-                                    <span class="grade-A">{{ evaluation.grade }}% A (Finalized by Tutor)</span>
-                                {% elif evaluation.grade == 80 %}
-                                    <span class="grade-A">{{ evaluation.grade }}% A (System Max - Pending Tutor Review)</span>
-                                {% elif evaluation.grade == 75 %}
-                                    <span class="grade-B">{{ evaluation.grade }}% B</span>
-                                {% elif evaluation.grade == 65 %}
-                                    <span class="grade-C"> {{ evaluation.grade }}% C</span>
-                                {% elif evaluation.grade == 50 %}
-                                    <span class="grade-D">{{ evaluation.grade }}% D</span>
-                                {% elif evaluation.grade == 40 %}
-                                    <span class="grade-F"> {{ evaluation.grade }}% F</span>
-                                {% elif evaluation.grade == 0 %}
-                                    <span class="grade-F"> {{ evaluation.grade }}% F (Plagiarized)</span>
-                                {% else %}
-                                    <span class="grade-NV">Grade: N/V</span>  <!-- Default case for missing grades -->
-                                {% endif %}
+                            {% if evaluation.grade == 80 %}
+                                <span class="grade-A">{{ evaluation.grade }}% A (System Max - Pending Tutor Review)</span>
+                            {% elif evaluation.grade >= 75 %}
+                                <span class="grade-B">{{ evaluation.grade }}% B</span>
+                            {% elif evaluation.grade >= 65 %}
+                                <span class="grade-C">{{ evaluation.grade }}% C</span>
+                            {% elif evaluation.grade >= 50 %}
+                                <span class="grade-D">{{ evaluation.grade }}% D</span>
+                            {% elif evaluation.grade >= 40 %}
+                                <span class="grade-F">{{ evaluation.grade }}% F</span>
+                            {% elif evaluation.grade <= 40 %}
+                                <span class="grade-F">{{ evaluation.grade }}% F (Plagiarized or Missing Constructs)</span>
+                            {% else %}
+                                <span class="grade-NV">Grade: N/V</span>  <!-- Default case for missing grades -->
+                            {% endif %}
+                        
+                        
                             {% else %}
                                 None
                             {% endif %}
@@ -138,6 +138,37 @@
                         <h6><strong>Tutor Feedback:</strong></h6>
                         <p>{{ evaluation.tutor_feedback }}</p>
                         <hr>
+                        <div class="performance-analysis">
+                            <h3>🔹 Strengths</h3>
+                            {% if strengths %}
+                                <ul>
+                                    {% for key, value in strengths.items %}
+                                        <li><strong>{{ key }}:</strong> {{ value }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p>No major strengths identified.</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="performance-analysis">
+                            <h3>🔸 Weaknesses</h3>
+                            {% if weaknesses %}
+                                <ul>
+                                    {% for key, value in weaknesses.items %}
+                                        <li><strong>{{ key }}:</strong> {{ value }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p>No major weaknesses identified.</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="overall-performance">
+                            <h3>📊 Overall Performance:</h3>
+                            <p>{{ overall_performance }}</p>
+                        </div>
+                        
                         <h6><strong>Correctness:</strong> {{ evaluation.correctness|yesno:"Correct,Incorrect" }}</h6>
                         <h6><strong>Time Complexity:</strong> {{ evaluation.time_complexity }}</h6>
                     </div>
