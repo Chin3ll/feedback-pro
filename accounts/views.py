@@ -231,9 +231,9 @@ def evaluation_report(request, evaluation_id):
     return render(request, 'student-assignment-report.html', {
         'execution_result': execution_result,  # Include execution output in context
         'evaluation': evaluation,
-        "strengths": student_performance.strengths if student_performance else {},
-        "weaknesses": student_performance.weaknesses if student_performance else {},
-        "overall_performance": student_performance.overall_performance if student_performance else "No data available",
+        # "strengths": student_performance.strengths if student_performance else {},
+        # "weaknesses": student_performance.weaknesses if student_performance else {},
+        # "overall_performance": student_performance.overall_performance if student_performance else "No data available",
     })
 
 
