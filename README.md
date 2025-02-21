@@ -130,7 +130,7 @@ Now assign a role to that user. options includes (Student, Tutor, Admin)
 - Login as a tutor ![alt text](zreadmeimages/loginimages.png)
 - Once you are logged in, You have to click on view students assignment ![alt text](zreadmeimages/viewassignment.png)
 - Now you'll be taken to the tutor dashboard. So click on student configuration ![alt text](zreadmeimages/student-config.png)
-- Now you can create evaluation criteria and save it. ![alt text](zreadmeimages/setevacriteria.png.png)
+- Now you can create evaluation criteria and save it. ![alt text](zreadmeimages/setevacriteria.png)
 - Note only 1 evaluation criteria instance must exist at any given time. However the evaluation criteria can subsequently be edited to meet new requirements as deemed by the tutor
 
 
