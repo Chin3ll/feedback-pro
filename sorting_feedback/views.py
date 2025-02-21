@@ -80,18 +80,18 @@ def evaluate_code_with_criteria(code, criteria):
     strengths = {}
     weaknesses = {}
 
-    # ✅ Syntax Check
+    # Syntax Check
     if criteria.check_syntax:
         try:
             compile(code, "<string>", "exec")
-            feedback.append("✅ Syntax is correct!")
-            strengths["Syntax"] = "Great job! Your syntax is correct and well-structured. Keep up the good work! 🎯"
+            feedback.append("Syntax is correct!")
+            strengths["Syntax"] = "Great job! Your syntax is correct and well-structured. Keep up the good work!"
         except Exception as exec_error:
             feedback.append(f"⚠️ Syntax error: {exec_error}")
             weaknesses["Syntax"] = "Your code contains syntax errors. Please check and fix them."
             correctness = False  # If syntax is incorrect, mark correctness as False
 
-    # ✅ Indentation Check
+    # Indentation Check
     if criteria.check_indentation:
         lines = code.split("\n")
         for line_no, line in enumerate(lines, start=1):
@@ -105,17 +105,17 @@ def evaluate_code_with_criteria(code, criteria):
                 weaknesses["Indentation"] = "Your code has incorrect indentation. Ensure you use multiples of 4 spaces."
                 correctness = False  # Incorrect indentation affects correctness
 
-    # ✅ Comment Check
+    #  Comment Check
     if criteria.check_comments:
         comment_count = sum(1 for line in code.split("\n") if line.strip().startswith("#"))
         if comment_count < criteria.min_comments:
             feedback.append(f"⚠️ Insufficient comments. Found {comment_count}, but at least {criteria.min_comments} required.")
             weaknesses["Comments"] = "Your code lacks sufficient comments. Aim for more explanations."
         else:
-            feedback.append(f"✅ Comments are sufficient: {comment_count} comment(s).")
+            feedback.append(f" Comments are sufficient: {comment_count} comment(s).")
             strengths["Comments"] = "Great job! Your code is well-commented, making it easier to understand. 💡"
 
-    # ✅ Construct Validation
+    # Construct Validation
     detected_constructs = detect_constructs(code)  # Detect constructs
     missing_constructs = []
 
@@ -129,7 +129,7 @@ def evaluate_code_with_criteria(code, criteria):
             weaknesses[construct] = f"The required construct '{construct}' is missing. Please include it."
         correctness = False  # Missing constructs make correctness False
     else:
-        feedback.append("✅ All required constructs are present.")
+        feedback.append(" All required constructs are present.")
         strengths["Constructs"] = "Well done! You've included all necessary constructs. 🏆"
 
     return {
@@ -369,5 +369,18 @@ def custom_404_view(request, exception):
 def custom_500_view(request):
     return render(request, 'errors/500.html', status=500)
 
+def student_performance(request):
+    student_performance = StudentPerformance.objects.filter(student=request.user).first()
 
+    context = {
+        "performance_data": {
+            "total_submissions": student_performance.total_submissions,
+            "accuracy": student_performance.accuracy,
+            "strength_areas": student_performance.strength_areas,
+            "weakness_areas": student_performance.weakness_areas,
+            "last_updated": student_performance.last_updated.strftime("%Y-%m-%d %H:%M"),
+        } if student_performance else None
+    }
+
+    return render(request, "performance.html", context)
     

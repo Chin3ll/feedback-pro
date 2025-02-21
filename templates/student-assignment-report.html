@@ -138,39 +138,16 @@
                         <h6><strong>Tutor Feedback:</strong></h6>
                         <p>{{ evaluation.tutor_feedback }}</p>
                         <hr>
-                        <div class="performance-analysis">
-                            <h3>🔹 Strengths</h3>
-                            {% if strengths %}
-                                <ul>
-                                    {% for key, value in strengths.items %}
-                                        <li><strong>{{ key }}:</strong> {{ value }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <p>No major strengths identified.</p>
-                            {% endif %}
-                        </div>
                         
-                        <div class="performance-analysis">
-                            <h3>🔸 Weaknesses</h3>
-                            {% if weaknesses %}
-                                <ul>
-                                    {% for key, value in weaknesses.items %}
-                                        <li><strong>{{ key }}:</strong> {{ value }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <p>No major weaknesses identified.</p>
-                            {% endif %}
-                        </div>
                         
-                        <div class="overall-performance">
-                            <h3>📊 Overall Performance:</h3>
-                            <p>{{ overall_performance }}</p>
-                        </div>
+                      
+                        
+                     
                         
                         <h6><strong>Correctness:</strong> {{ evaluation.correctness|yesno:"Correct,Incorrect" }}</h6>
                         <h6><strong>Time Complexity:</strong> {{ evaluation.time_complexity }}</h6>
+
+                        <a href="{% url 'student_performance' %}"> View Performance  </a>
                     </div>
                 </div>
             </div>

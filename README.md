@@ -94,37 +94,52 @@ The project will be available at `http://127.0.0.1:8000/`.
 
 ## step 3 Assigning Roles
 - Navigate to `http://127.0.0.1:8000/profile/`
-Once on the profile page click on Admin Panel button to enable view the admin panel
-- Admin Panel button ![alt text](zreadmeimages/image-4.png)
-Next click on the profile model to assign Admin role to your newly created account.  Note every newly created will require to be assign a role even a super user will have to assign himself the role of admin when he gets here
+Once on the profile page click on Admin Panel button to enable you view the admin panel
+- Click the Admin Panel button ![alt text](zreadmeimages/image-4.png)
+Next click on the profile model to assign Admin role to your newly created account.  Note every newly created user will require to be assign a role even a super user will have to assign himself the role of admin when he gets here
 - Asign role to created user ![alt text](zreadmeimages/image-5.png)
 Next click on any desired user from the list. Note every newly created will require to be assign a role even a super user will have to assign himself the role of admin when he gets here
 - User profile list ![alt text](zreadmeimages/image-11.png)
-Now assign a role to that user options includes (Student, Lecturer, Admin)
+Now assign a role to that user options includes (Student, Tutor, Admin)
 - User profile role ![alt text](zreadmeimages/image-12.png)
 
-## step Creating new user (Student)
+## step 4 Creating new user (Student)
 - Navigate to `http://127.0.0.1:8000/admin/`
 Once on the admin page click on users model ![alt text](zreadmeimages/image-7.png)
 - Now you'll be taken to this page `http://127.0.0.1:8000/auth/user/`
 Next click on add user + at the top right corner of your screen ![alt text](zreadmeimages/image-8.png)
 - Now feel in the user details you want to create and click save ![alt text](zreadmeimages/image-9.png) ![alt text](zreadmeimages/image-10.png)
-Next Once the user has been created you have to go back to the profile model again to assign a role to that new user you just created
+Next Once the user has been created you have to go back to the profile model again to assign a role (Students) to that new user you just created
 - User profile list ![alt text](zreadmeimages/image-11.png)
-Now assign a role to that user options includes (Student, Lecturer, Admin)
+Now assign a role to that user. Options includes (Student, Tutor, Admin)
 - User profile role ![alt text](zreadmeimages/image-6.png)
 
-## step Creating new user (Lecturer)
+## step 5 Creating new user (Tutor)
 - Navigate to `http://127.0.0.1:8000/admin/`
 Once on the admin page click on users model ![alt text](zreadmeimages/image-7.png)
 - Now you'll be taken to this page `http://127.0.0.1:8000/auth/user/`
 Next click on add user + at the top right corner of your screen ![alt text](zreadmeimages/image-8.png)
 - Now feel in the user details you want to create and click save ![alt text](zreadmeimages/image-9.png) ![alt text](zreadmeimages/image-14.png)
-Make for to check mark all three permissions Active, Staff status and Superuser status
-Next Once the user has been created you have to go back to the profile model again to assign a role to that new user you just created
+Make sure to check mark all three permissions Active, Staff status and Superuser status.
+Next Once the user has been created you have to go back to the profile model again to assign a role (Tutor) to that new user you just created
 - User profile list ![alt text](zreadmeimages/image-11.png)
-Now assign a role to that user options includes (Student, Lecturer, Admin)
+Now assign a role to that user. options includes (Student, Tutor, Admin)
 - User profile role ![alt text](zreadmeimages/image-6.png)
+
+## step 6 Creating Evaluation Criteria (Tutor Task) 
+- Login as a tutor ![alt text](zreadmeimages/loginimages.png)
+- Once you are logged in, You have to click on view students assignment ![alt text](zreadmeimages/viewassignment.png)
+- Now you'll be taken to the tutor dashboard. So click on student configuration ![alt text](zreadmeimages/student-config.png)
+- Now you can create evaluation criteria and save it. ![alt text](zreadmeimages/setevacriteria.png.png)
+- Note only 1 evaluation criteria instance must exist at any given time. However the evaluation criteria can subsequently be edited to meet new requirements as deemed by the tutor
+
+
+## step 7 View Submitted Evaluation (Tutor Task) 
+- Click the evaluation model to see all the evaluations submitted by student. ![alt text](zreadmeimages/stuevals.png)
+
+## step 8 View Student Performance (Tutor Task) 
+- Click the Student Performance model to view student performance directly from the admin panel. ![alt text](zreadmeimages/studper.png)
+
 
 ### Accessing the Admin Panel
 - Navigate to `http://127.0.0.1:8000/admin/`
@@ -139,8 +154,8 @@ Now assign a role to that user options includes (Student, Lecturer, Admin)
 - Navigate to `http://127.0.0.1:8000/dashboard-s/`
 - View student dashboard
 
-### Reviewing Submissions (Lecturer View)
--Login as Lecturer account
+### Reviewing Submissions (Tutor View)
+-Login as Tutor account
 - Navigate to `http://127.0.0.1:8000/dashboard-t/`
 - View Tutor dashboard
 

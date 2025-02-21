@@ -1,14 +1,147 @@
-<h3>Performance Report</h3>
-<h4>Strengths:</h4>
-<ul>
-    {% for key, value in performance.strength_areas.items %}
-        <li>{{ key }}: {{ value }} times</li>
-    {% endfor %}
-</ul>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            color: #fff;
+            height: 100vh;
+            position: fixed;
+        }
+        .sidebar a {
+            color: #adb5bd;
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+        }
+        .sidebar a:hover {
+            background-color: #495057;
+            color: #fff;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            width: 100%;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
 
-<h4>Weaknesses:</h4>
-<ul>
-    {% for key, value in performance.weakness_areas.items %}
-        <li>{{ key }}: {{ value }} times</li>
-    {% endfor %}
-</ul>
+<div class="sidebar">
+    <h4 class="text-center py-3">Dashboard</h4>
+    <a href="{% url 'submit_assignment' %}">Submit Assignment</a>
+    <a href="{% url 'student_submitted_assignment' %}">Check Grade and Feedback</a> 
+</div>
+
+<div class="main-content">
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Student Dashboard</a>
+               
+                <div class="dropdown ms-auto">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle"></i> Account
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">Student Performance Dashboard</div>
+                    <div class="card-body">
+                        <!-- Performance Overview -->
+                        <h5>Performance Overview</h5>
+                        <div class="p-2 bg-light">
+                            <strong>Total Submissions:</strong> {{ performance_data.total_submissions }}
+                        </div>
+                        <!-- <div class="p-2 bg-light mt-1">
+                            <strong>Accuracy:</strong> {{ performance_data.accuracy }}%
+                        </div> -->
+                        <div class="p-2 bg-light mt-1">
+                            <strong>Last Updated:</strong> {{ performance_data.last_updated }}
+                        </div>
+
+                        <!-- Strength Areas -->
+                        <h5 class="mt-3">Strength Areas</h5>
+                        <div class="p-2 bg-light">
+                            {{ performance_data.strength_areas }}
+                        </div>
+
+                        <!-- Weakness Areas -->
+                        <h5 class="mt-3">Weakness Areas</h5>
+                        <div class="p-2 bg-light">
+                            {{ performance_data.weakness_areas }}
+                        </div>
+
+                        <!-- Grade Performance Over Time -->
+                        <!-- <h5 class="mt-3">Grade Performance Over Time</h5>
+                        {% if grade_performance_over_time %}
+                            <ul class="list-group">
+                                {% for record in grade_performance_over_time %}
+                                    <li class="list-group-item">{{ record.date }}: {{ record.grade }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No grade history available.</p>
+                        {% endif %} -->
+
+                        <!-- Grade Chart -->
+                        <canvas id="gradeChart" class="mt-3"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let gradeData = JSON.parse('{{ grade_performance_over_time|safe }}'.replace(/&quot;/g, '"'));
+
+    let labels = gradeData.map(item => item.date);
+    let grades = gradeData.map(item => item.grade);
+
+    var ctx = document.getElementById('gradeChart').getContext('2d');
+    var gradeChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Grade Performance',
+                data: grades,
+                borderColor: 'blue',
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { title: { display: true, text: 'Date' } },
+                y: { title: { display: true, text: 'Grade' }, beginAtZero: true }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
