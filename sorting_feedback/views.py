@@ -1,14 +1,17 @@
 
 from .evaluation import evaluate_code
 import json
-
+import matplotlib.pyplot as plt
+import io
+import urllib
+import base64
 from django.contrib.auth.decorators import login_required
 from .models import Submission, Evaluation
 from django.shortcuts import render
 import logging
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import EvaluationCriteria, Evaluation
+from .models import *
 import ast
 import subprocess
 from django.contrib.auth.models import User  # Ensure the User model is imported
@@ -381,8 +384,30 @@ def custom_404_view(request, exception):
 def custom_500_view(request):
     return render(request, 'errors/500.html', status=500)
 
+
 def student_performance(request):
     student_performance = StudentPerformance.objects.filter(student=request.user).first()
+    student_evaluations = Evaluation.objects.filter(student=request.user)
+
+    # Prepare data for the bar chart
+    labels = [eval.title for eval in student_evaluations]  # Evaluation names
+    grades = [eval.grade for eval in student_evaluations]   # Corresponding grades
+
+    if labels and grades:  # Generate chart only if there are submissions
+        plt.figure(figsize=(5, 3))  # Adjust size as needed
+        plt.bar(labels, grades, color=['red', 'blue', 'green', 'yellow', 'pink'])
+        plt.xlabel("Evaluations")
+        plt.ylabel("Grade")
+        plt.title("Student Grade per Evaluation")
+
+        # Convert the plot to an image
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png')
+        buffer.seek(0)
+        chart_uri = base64.b64encode(buffer.getvalue()).decode()
+        buffer.close()
+    else:
+        chart_uri = None  # No submissions yet
 
     context = {
         "performance_data": {
@@ -391,8 +416,10 @@ def student_performance(request):
             "strength_areas": student_performance.strength_areas,
             "weakness_areas": student_performance.weakness_areas,
             "last_updated": student_performance.last_updated.strftime("%Y-%m-%d %H:%M"),
-        } if student_performance else None
+        } if student_performance else None,
+        "chart_uri": chart_uri  # Pass chart to the template
     }
 
     return render(request, "performance.html", context)
+
     
