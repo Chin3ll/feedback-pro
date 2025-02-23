@@ -59,6 +59,8 @@ def check_plagiarism(new_code, student):
 
 
 
+
+
 def evaluate_code_with_criteria(code, criteria):
     feedback = []
     correctness = True  # Default to True, adjust based on conditions
@@ -84,15 +86,16 @@ def evaluate_code_with_criteria(code, criteria):
     if criteria.check_syntax:
         try:
             compile(code, "<string>", "exec")
-            feedback.append("Syntax is correct!")
-            strengths["Syntax"] = "Great job! Your syntax is correct and well-structured. Keep up the good work!"
+            feedback.append("✅ Syntax is correct!")
+            strengths["Syntax"] = "Great job! Your syntax is correct and well-structured."
         except Exception as exec_error:
-            feedback.append(f"⚠️ Syntax error: {exec_error}")
+            feedback.append(f"❌ Syntax error: {exec_error}")
             weaknesses["Syntax"] = "Your code contains syntax errors. Please check and fix them."
             correctness = False  # If syntax is incorrect, mark correctness as False
 
     # Indentation Check
     if criteria.check_indentation:
+        indentation_correct = True
         lines = code.split("\n")
         for line_no, line in enumerate(lines, start=1):
             stripped = line.lstrip()
@@ -101,19 +104,22 @@ def evaluate_code_with_criteria(code, criteria):
             
             leading_spaces = len(line) - len(stripped)
             if leading_spaces % 4 != 0:
-                feedback.append(f"⚠️ Line {line_no}: Indentation should be a multiple of 4 spaces.")
+                feedback.append(f"❌ Line {line_no}: Indentation should be a multiple of 4 spaces.")
                 weaknesses["Indentation"] = "Your code has incorrect indentation. Ensure you use multiples of 4 spaces."
-                correctness = False  # Incorrect indentation affects correctness
+                indentation_correct = False  
 
-    #  Comment Check
+        if indentation_correct:
+            strengths["Indentation"] = "Well done! Your indentation follows the correct structure."
+
+    # Comment Check
     if criteria.check_comments:
         comment_count = sum(1 for line in code.split("\n") if line.strip().startswith("#"))
         if comment_count < criteria.min_comments:
-            feedback.append(f"⚠️ Insufficient comments. Found {comment_count}, but at least {criteria.min_comments} required.")
+            feedback.append(f"❌ Insufficient comments. Found {comment_count}, but at least {criteria.min_comments} required.")
             weaknesses["Comments"] = "Your code lacks sufficient comments. Aim for more explanations."
         else:
-            feedback.append(f" Comments are sufficient: {comment_count} comment(s).")
-            strengths["Comments"] = "Great job! Your code is well-commented, making it easier to understand. 💡"
+            feedback.append(f"✅ Comments are sufficient: {comment_count} comment(s).")
+            strengths["Comments"] = "Great job! Your code is well-commented."
 
     # Construct Validation
     detected_constructs = detect_constructs(code)  # Detect constructs
@@ -124,17 +130,20 @@ def evaluate_code_with_criteria(code, criteria):
             missing_constructs.append(required_construct)
 
     if missing_constructs:
-        feedback.append(f"⚠️ Required constructs missing: {', '.join(missing_constructs)}.")
+        feedback.append(f"❌ Required constructs missing: {', '.join(missing_constructs)}.")
         for construct in missing_constructs:
             weaknesses[construct] = f"The required construct '{construct}' is missing. Please include it."
-        correctness = False  # Missing constructs make correctness False
     else:
-        feedback.append(" All required constructs are present.")
-        strengths["Constructs"] = "Well done! You've included all necessary constructs. 🏆"
+        feedback.append("✅ All required constructs are present.")
+        strengths["Constructs"] = "Well done! You've included all necessary constructs."
+
+    # Final correctness check
+    if missing_constructs or "Syntax" in weaknesses or "Indentation" in weaknesses or "Comments" in weaknesses:
+        correctness = False  # If any issue exists, correctness is False
 
     return {
         "feedback": "\n".join(feedback),
-        "correctness": correctness,  # Correctness now considers missing constructs
+        "correctness": correctness,
         "time_complexity": "Not Applicable",
         "strengths": strengths,
         "weaknesses": weaknesses,
@@ -224,9 +233,12 @@ def submit_code(request):
         )
 
         # Update Student Performance
+        analyze_student_performance(student)  # Call here to analyze performance after saving evaluation
+
+        # Update Student Performance using method
         student_performance, created = StudentPerformance.objects.get_or_create(student=student)
         student_performance.update_performance(evaluation)
-        
+                
         return render(request, "feedback_result.html", {
             "success": True,
             "feedback": feedback["feedback"],

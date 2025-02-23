@@ -102,23 +102,7 @@ def dashboard_a(request):
 
 @login_required
 def dashboard_student_assignment_submission(request):
-    # Dummy data for demonstration
-    # stats = {
-    #     "total_students": 120,
-    #     "assignments_submitted": 75,
-    #     "pending_approvals": 18,
-    # }
-    
-    # recent_submissions = [
-    #     {"id": 1, "student_name": "John Doe", "assignment": "Sorting Algorithm", "submitted_on": "2025-01-01", "status": "Approved"},
-    #     {"id": 2, "student_name": "Jane Smith", "assignment": "Bubble Sort", "submitted_on": "2025-01-02", "status": "Pending"},
-    #     {"id": 3, "student_name": "Mike Brown", "assignment": "Merge Sort", "submitted_on": "2025-01-03", "status": "Rejected"},
-    # ]
-    
-    # context = {
-    #     "stats": stats,
-    #     "recent_submissions": recent_submissions,
-    # }
+
     
     return render(request, "dashboard-submit-assignment.html")    
 
@@ -148,19 +132,7 @@ def dashboard_t(request):
 
 @login_required
 def dashboard_s(request):
-    # Dummy data for demonstration
-    # stats = {
-    #     "total_students": 120,
-    #     "assignments_submitted": 75,
-    #     "pending_approvals": 18,
-    # }
-    
-    # recent_submissions = [
-    #     {"id": 1, "student_name": "John Doe", "assignment": "Sorting Algorithm", "submitted_on": "2025-01-01", "status": "Approved"},
-    #     {"id": 2, "student_name": "Jane Smith", "assignment": "Bubble Sort", "submitted_on": "2025-01-02", "status": "Pending"},
-    #     {"id": 3, "student_name": "Mike Brown", "assignment": "Merge Sort", "submitted_on": "2025-01-03", "status": "Rejected"},
-    # ]
-    
+      
     total_students = User.objects.filter(profile__role='student').count()
     
     current_user = request.user
