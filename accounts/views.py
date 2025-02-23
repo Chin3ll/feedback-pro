@@ -15,8 +15,10 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import user_passes_test
 from .utils import execute_code_safely  # Import the execution function
-from sorting_feedback.models import StudentPerformance, Evaluation
+from sorting_feedback.models import *
 
+from django.db.models import Avg
+from .models import *
 
 
 def logout_required(view_func):
@@ -107,27 +109,35 @@ def dashboard_student_assignment_submission(request):
     return render(request, "dashboard-submit-assignment.html")    
 
 @login_required
+
 def dashboard_t(request):
-  
-  
     total_students = User.objects.filter(profile__role='student').count()
-    evaluations = Evaluation.objects.all().count()
-    pending_evaluations = Evaluation.objects.filter(status='pending').count()
+    evaluations = Evaluation.objects.all()
+    pending_evaluations = evaluations.filter(status='pending').count()
 
-    # Fetch the latest evaluation criteria
-    criteria = EvaluationCriteria.objects.order_by('-last_updated').first()
+    # Bar Chart: Average Grade per Evaluation Construct
+    construct_avg = evaluations.values("title").annotate(avg_grade=Avg("grade"))
+    construct_labels = [item["title"] for item in construct_avg]
+    construct_grades = [round(item["avg_grade"], 2) if item["avg_grade"] else 0 for item in construct_avg]
 
-   
-    
+    # Pie Charts: Top 7 Best & Worst Students
+    top_students = evaluations.order_by("-grade")[:7]
+    worst_students = evaluations.order_by("grade")[:7]
+
     context = {
         "total_students": total_students,
-        "assignments_submitted": evaluations,
+        "assignments_submitted": evaluations.count(),
         "pending_evaluations": pending_evaluations,
-        "criteria" : criteria
+        "construct_labels": construct_labels,
+        "construct_grades": construct_grades,
+        "top_students_names": [eval.student.username for eval in top_students],
+        "top_students_grades": [round(eval.grade, 2) for eval in top_students],
+        "worst_students_names": [eval.student.username for eval in worst_students],
+        "worst_students_grades": [round(eval.grade, 2) for eval in worst_students]
     }
-    
-    
+
     return render(request, "accounts/dashboard-t.html", context)
+
 
 
 @login_required
