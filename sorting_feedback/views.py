@@ -5,13 +5,17 @@ import matplotlib.pyplot as plt
 import io
 import urllib
 import base64
+import matplotlib.pyplot as plt
+import io
+from .models import *
+
 from django.contrib.auth.decorators import login_required
 from .models import Submission, Evaluation
 from django.shortcuts import render
 import logging
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import *
+from .models import EvaluationCriteria, Evaluation
 import ast
 import subprocess
 from django.contrib.auth.models import User  # Ensure the User model is imported
