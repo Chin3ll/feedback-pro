@@ -39,12 +39,6 @@ $ source venv/bin/activate # On Mac
 ```sh
 $ pip install -r requirements.txt
 ```
-### Configure Database
-- Create a new DB in mysql called `feedbackgenerator` as seen here ![alt text](image-13.png)
-```sh 
-$ pip install mysql-connector-python
-```
-
 
 1. Run migrations:
     ```sh
