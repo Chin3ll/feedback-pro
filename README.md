@@ -21,7 +21,7 @@ Ensure you have the following installed:
 ### Clone the Repository
 ```sh
 $ git clone https://github.com/Chin3ll/feedback-pro.git
-$ cd feedbackgenerator
+$ cd feedback-pro
 ```
 
 ### Create a Virtual Environment
