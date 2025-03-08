@@ -16,7 +16,7 @@ Ensure you have the following installed:
 - Python 3.x
 - pip
 - virtualenv
-- MySQL (or any other database configured in `settings.py`)
+- SQLite (or any other database configured in `settings.py`)
 
 ### Clone the Repository
 ```sh
@@ -45,25 +45,8 @@ $ pip install -r requirements.txt
 $ pip install mysql-connector-python
 ```
 
-1. Update DATABASES settings in settings.py:
-    python
-  ``` DATABASES = {
-        "default": {
-            "ENGINE": "mysql.connector.django",
-            "NAME": "feedbackgenerator",
-            "USER": "root",
-            "PASSWORD": "",
-            "HOST": "localhost",
-            "PORT": "3306",
-            "OPTIONS": {
-                "autocommit": True,
-            },
-        }
-    }
-    ```
 
-
-2. Run migrations:
+1. Run migrations:
     ```sh
     $ python manage.py makemigrations
     $ python manage.py migrate
