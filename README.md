@@ -27,7 +27,7 @@ $ cd feedback-pro
 ### Create a Virtual Environment
 ```sh
 $ python -m venv venv
-$ source venv/Scripts/activate  # On Windows
+$ .\venv\Scripts\Activate  # On Windows
 ```
 
 ```sh
