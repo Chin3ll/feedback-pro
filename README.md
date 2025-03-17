@@ -46,7 +46,7 @@ $ pip install -r requirements.txt
     $ python manage.py migrate
     ```
 
-### Create a Superuser
+### Create a Superuser (This is optional defualt admin is already available check below)
 ```sh
 $ python manage.py createsuperuser
 ```
@@ -57,6 +57,13 @@ Follow the prompts to create an admin account.
 $ python manage.py runserver
 ```
 The project will be available at `http://127.0.0.1:8000/`.
+
+## Default Login Account Credentials
+- username: admin password: admin
+- username: student1 password: 123456!@#$%^
+- username: student2 password: 123456!@#$%^
+- username: student3 password: 123456!@#$%^
+- username: tutor password: 123456!@#$%^
 
 ## Usage
 
