@@ -27,7 +27,7 @@ $ cd feedback-pro
 ### Create a Virtual Environment
 ```sh
 $ python -m venv venv
-$ .\venv\Scripts\Activate  # On Windows
+$ source venv/Scripts/activate  # On Windows
 ```
 
 ```sh
@@ -63,7 +63,7 @@ The project will be available at `http://127.0.0.1:8000/`.
 - username: student1 password: 123456!@#$%^
 - username: student2 password: 123456!@#$%^
 - username: student3 password: 123456!@#$%^
-- upto student14 password: 123456!@#$%^
+- continuous upto student14 password: 123456!@#$%^ for all
 - username: tutor password: 123456!@#$%^
 
 ## Usage
