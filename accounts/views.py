@@ -89,12 +89,12 @@ def dashboard_a(request):
 
     total_students = User.objects.filter(profile__role='student').count()
     evaluations = Evaluation.objects.all().count()
-    pending_evaluations = Evaluation.objects.filter(status='pending').count()
+    reviewed_evaluations = Evaluation.objects.filter(status='reviewed').count()
     
     context = {
         "total_students": total_students,
         "assignments_submitted": evaluations,
-        "pending_evaluations": pending_evaluations
+        "reviewed_evaluations": reviewed_evaluations
     }
     
    
@@ -113,7 +113,7 @@ def dashboard_student_assignment_submission(request):
 def dashboard_t(request):
     total_students = User.objects.filter(profile__role='student').count()
     evaluations = Evaluation.objects.all()
-    pending_evaluations = evaluations.filter(status='pending').count()
+    reviewed_evaluations = evaluations.filter(status='reviewed').count()
 
     # Bar Chart: Average Grade per Evaluation Construct
     construct_avg = evaluations.values("title").annotate(avg_grade=Avg("grade"))
@@ -127,7 +127,7 @@ def dashboard_t(request):
     context = {
         "total_students": total_students,
         "assignments_submitted": evaluations.count(),
-        "pending_evaluations": pending_evaluations,
+        "reviewed_evaluations": reviewed_evaluations,
         "construct_labels": construct_labels,
         "construct_grades": construct_grades,
         "top_students_names": [eval.student.username for eval in top_students],
@@ -220,11 +220,11 @@ def evaluation_report(request, evaluation_id):
 
 
 @login_required
-def pending_evaluations_list(request):
-    # Fetch all pending evaluations
-    evaluations = Evaluation.objects.filter(status='pending')
+def reviewed_evaluations_list(request):
+    # Fetch all reviewed evaluations
+    evaluations = Evaluation.objects.filter(status='reviewed')
 
-    return render(request, 'pending_evaluations_list.html', {'evaluations': evaluations})
+    return render(request, 'reviewed_evaluations_list.html', {'evaluations': evaluations})
 
 
 class CustomPasswordResetView(PasswordResetView):

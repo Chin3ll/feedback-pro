@@ -19,7 +19,7 @@ urlpatterns = [
     path('dashboard-student-assignment-submission/', views.dashboard_student_assignment_submission, name='dashboard_student_assignment_submission'),
     path('students-list/', views.students_list, name='students_list'),
     path('evaluation/<int:evaluation_id>/', views.evaluation_report, name='evaluation_report'),
-    path('pending-evaluation-list/', views.pending_evaluations_list, name='pending_evaluations_list'),
+    path('reviewed-evaluation-list/', views.reviewed_evaluations_list, name='reviewed_evaluations_list'),
 
     # Forgot password
     path("password-reset/", auth_views.PasswordResetView.as_view(template_name="resetPassword/password_reset.html"), name="password_reset"),
