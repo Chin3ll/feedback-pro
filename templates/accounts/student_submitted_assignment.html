@@ -16,6 +16,7 @@
             color: #fff;
             height: 100vh;
             position: fixed;
+            display: none;
         }
         .sidebar a {
             color: #adb5bd;
@@ -27,13 +28,32 @@
             background-color: #495057;
             color: #fff;
         }
+        .student-dashboard {
+            display: none;
+        }
         .main-content {
-            margin-left: 250px;
+            /*margin-left: 250px;*/
             padding: 20px;
             width: 100%;
         }
         .card {
             margin-bottom: 20px;
+        }
+
+        /* For laptop, desktop, and larger screens */
+        @media (min-width: 1024px) {
+            .sidebar {
+                display: block;
+            }
+            .student-dashboard {
+                display: block;
+            }
+            .dash-menu-items {
+                display: none;
+            }
+            .main-content {
+                margin-left: 250px;
+            }
         }
 
   
@@ -62,7 +82,17 @@
     <div class="container-fluid">
         <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">Student Dashboard</a>
+                <a class="navbar-brand student-dashboard" href="#">Student Dashboard</a>
+
+                <div class="navbar-brand dropdown ml-auto dash-menu-items">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="userMenu1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle"></i>Student Dashboard
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu1">
+                        <li><a class="dropdown-item" href="{% url 'submit_assignment' %}">Submit Assignment</a></li>
+                        <li><a class="dropdown-item" href="{% url 'student_submitted_assignment' %}">Check Grade and Feedback</a></li>
+                    </ul>
+                </div>
                
                 <div class="dropdown ms-auto">
                     <button class="btn btn-light dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
@@ -82,8 +112,8 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">Recent Submissions</div>
-                    <div class="card-body">
-                        <table class="table table-striped table-responsive table-bordered">
+                    <div class="card-body table-responsive">
+                        <table class="table table-striped table-bordered">
                             <thead>
                                 <tr>
                                     <th>#</th>

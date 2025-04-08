@@ -58,6 +58,11 @@ $ python manage.py runserver
 ```
 The project will be available at `http://127.0.0.1:8000/`.
 
+### Run the Project Test
+
+```sh
+$ python manage.py test sorting_feedback.tests
+```
 ## Default Login Account Credentials
 - username: admin password: admin
 - username: student1 password: 123456!@#$%^

@@ -17,6 +17,7 @@
             color: #fff;
             height: 100vh;
             position: fixed;
+            display: none;
         }
         .sidebar a {
             color: #adb5bd;
@@ -28,13 +29,35 @@
             background-color: #495057;
             color: #fff;
         }
+        .tutor-dashboard {
+            display: none;
+        }
         .main-content {
-            margin-left: 250px;
+            /*margin-left: 250px;*/
             padding: 20px;
             width: 100%;
         }
         .card {
             margin-bottom: 20px;
+        }
+
+        /* For laptop, desktop, and larger screens */
+        @media (min-width: 1024px) {
+            .sidebar {
+                display: block;
+            }
+            .tutor-dashboard {
+                display: block;
+            }
+            .dash-menu-items {
+                display: none;
+            }
+            .main-content {
+                margin-left: 250px;
+            }
+            .girl-student {
+                width: 400px;
+            }
         }
     </style>
 </head>
@@ -50,7 +73,18 @@
     <div class="container-fluid">
         <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{% url 'dashboard_a' %}">Admin Dashboard</a>
+                <a class="navbar-brand tutor-dashboard" href="{% url 'dashboard_a' %}">Admin Dashboard</a>
+
+                <div class="navbar-brand dropdown ml-auto dash-menu-items">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="userMenu1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle"></i>Admin Dashboard
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu1">
+                        <li><a class="dropdown-item" href="{% url 'users_list' %}">Manage All users</a></li>
+                        <li><a class="dropdown-item" href="{% url 'students_list' %}">Manage Students</a></li>
+                        <li><a class="dropdown-item" href="{% url 'check_student_assignments' %}">Manage Assignments</a></li>
+                    </ul>
+                </div>
 
                 <!-- Right-aligned dropdown -->
                 <div class="dropdown ms-auto">
@@ -99,7 +133,7 @@
                     <div class="card-header">Feedback GS System <a class="btn btn-secondary" href="/">Home</a> || <a href="/admin/" class="btn btn-primary">Go to Admin Panel</a> </div>
                     <div class="card-body">
                         <table class="table table-responsive table-bordered">
-                            <img src="{% static 'images/pexels-anastasiya-gepp-654466-1462630.jpg' %}" width="400px" height="300px" alt="">
+                            <img class="girl-student" src="{% static 'images/pexels-anastasiya-gepp-654466-1462630.jpg' %}" width="100%" height="300px" alt="">
                         </table>
                     </div>
                 </div>
