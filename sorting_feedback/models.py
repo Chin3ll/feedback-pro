@@ -58,8 +58,16 @@ class EvaluationCriteria(models.Model):
     #     super().save(*args, **kwargs)
   
 
-    def __str__(self):
-        return "Evaluation Criteria"
+    def clean(self):
+        if not self.pk and EvaluationCriteria.objects.exists():
+            raise ValidationError("Only one EvaluationCriteria instance is allowed.")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()  # enforce clean() before saving
+        super().save(*args, **kwargs)
+
+    def _str_(self):
+        return self.title
 
 class DeadlineExtensionLog(models.Model):
     tutor = models.ForeignKey(User, on_delete=models.CASCADE)

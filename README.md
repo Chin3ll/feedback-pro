@@ -117,11 +117,19 @@ Now assign a role to that user. options includes (Student, Tutor, Admin)
 - User profile role ![alt text](zreadmeimages/image-6.png)
 
 ## step 6 Creating Evaluation Criteria (Tutor Task) 
+In this project feedback generating app, Evaluation Criteria refers to the set of rules or standards used to assess student submissions.
+
+Think of it as the blueprint or rubric for grading code assignments automatically.
+There can only be one evaluation criteria however the criteria can be edited to march me test/assignment, this was implemented as a security measure 
+to prevent students from gaming the system
+
 - Login as a tutor ![alt text](zreadmeimages/loginimages.png)
 - Once you are logged in, You have to click on view students assignment ![alt text](zreadmeimages/viewassignment.png)
-- Now you'll be taken to the tutor dashboard. So click on student configuration ![alt text](zreadmeimages/student-config.png)
-- Now you can create evaluation criteria and save it. ![alt text](zreadmeimages/setevacriteria.png)
-- Note only 1 evaluation criteria instance must exist at any given time. However the evaluation criteria can subsequently be edited to meet new requirements as deemed by the tutor
+- Now you'll be taken to the tutor dashboard. So click on student configuration ![alt text](zreadmeimages/evaluation-crit.png)
+- Now you can create evaluation criteria and save it. ![alt text](zreadmeimages/creating-eval-cri.png)
+- The title field implies a short description of the construct(s) the student is being tested on, check syntax means the test will be evaluated on syntax inclusive, Check indentation means the test will be evaluated on indentation inclusive, Check comments means the test will be evaluated on proper commenting inclusive. Required constructs implies a single or multiple list constructs the the system will be evaluted on. Note The list must be in double qoutes entries. 
+- Examples of required constructs includes (while loop, for loop, function, lambda function, list comprehension, dictionary comprehension, set comprehension, try-except, class, return statement, if statement, import statement, import from, dictionary, list, tuple, set). A single or combination of multiple constructs as listed here can be used.
+- Note only 1 evaluation criteria instance must exist at any given time. However the evaluation criteria can subsequently be edited to meet new requirements as deemed by the tutor. If an evaluation criteria instance already exist then it should only be edited to meet new assignment requirement.
 
 
 ## step 7 View Submitted Evaluation (Tutor Task) 
