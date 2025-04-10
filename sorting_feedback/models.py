@@ -44,7 +44,7 @@ class EvaluationCriteria(models.Model):
     check_indentation = models.BooleanField(default=True, help_text="Check for correct indentation.")
     check_comments = models.BooleanField(default=True, help_text="Check for good comments.")
     min_comments = models.PositiveIntegerField(default=1, help_text="Minimum required comments in the code.")
-    required_constructs = models.JSONField(default=list, help_text="List of required constructs (e.g., ['while loop', 'function']).")
+    required_constructs = models.JSONField(default=list, help_text='List of required constructs (e.g., ["while loop", "function"]).')
     submission_deadline = models.DateTimeField(null=True, blank=True)
     
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
