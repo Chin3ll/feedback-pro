@@ -77,7 +77,7 @@ class DeadlineExtensionLog(models.Model):
     timestamp = models.DateTimeField(default=now)
 
     def __str__(self):
-        return f"Extension for {self.evaluation_criteria}"  
+        return f"Extension for {self.criteria}"  
 
 class StudentPerformance(models.Model):
     student = models.OneToOneField(User, on_delete=models.CASCADE)
